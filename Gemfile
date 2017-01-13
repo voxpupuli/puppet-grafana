@@ -32,6 +32,8 @@ group :test do
   gem 'coveralls',                                                  :require => false if RUBY_VERSION >= '2.0.0'
   gem 'simplecov-console',                                          :require => false if RUBY_VERSION >= '2.0.0'
   gem 'toml',                                                       :require => false
+  gem 'github_changelog_generator',                                 :require => false if RUBY_VERSION >= '2.2.2'
+  gem 'github_changelog_generator', '~> 1.13.0',                    :require => false if RUBY_VERSION < '2.2.2'
 end
 
 group :development do
@@ -65,4 +67,3 @@ ENV['PUPPET_VERSION'].nil? ? puppetversion = '~> 4.0' : puppetversion = ENV['PUP
 gem 'puppet', puppetversion, :require => false, :groups => [:test]
 
 # vim: syntax=ruby
-gem 'github_changelog_generator'
