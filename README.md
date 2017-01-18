@@ -321,6 +321,15 @@ Example:
 
 ```
 
+
+#### Using Grafana in a reverse proxy environment
+
+When defining `grafana_dashboard` and / or `grafana_datasource` you have to make sure you
+set `grafana_api_path` according to your needs. By default this value is set to `/api`, if
+you are using a sub-path for Grafana, for instance `/grafana`, the `grafana_api_path` must
+be set to `/grafana/api`. Do not add a trailing `/` (slash) at the end of the value.
+
+
 #### Custom Types and Providers
 
 The module includes two custom types: `grafana_dashboard` and `grafana_datasource`
@@ -334,6 +343,7 @@ grafana_dashboard { 'example_dashboard':
   grafana_url       => 'http://localhost:3000',
   grafana_user      => 'admin',
   grafana_password  => '5ecretPassw0rd',
+  grafana_api_path  => '/api'
   content           => template('path/to/exported/file.json'),
 }
 ```
@@ -351,6 +361,7 @@ grafana_datasource { 'influxdb':
   grafana_url       => 'http://localhost:3000',
   grafana_user      => 'admin',
   grafana_password  => '5ecretPassw0rd',
+  grafana_api_path  => '/api'
   type              => 'influxdb',
   url               => 'http://localhost:8086',
   user              => 'admin',
