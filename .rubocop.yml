@@ -430,6 +430,7 @@ Style/PerlBackrefs:
 
 Style/PredicateName:
   Enabled: True
+  NameWhitelist: is_to_s
 
 Style/RedundantException:
   Enabled: True
