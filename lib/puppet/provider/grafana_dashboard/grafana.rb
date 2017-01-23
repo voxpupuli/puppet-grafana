@@ -73,7 +73,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
 
   def content
     if resource[:enforce_dashboard] == true
-      @dashboard.reject {|k| k =~ %r{^id|version|title$} }
+      @dashboard.reject { |k| k =~ %r{^id|version|title$} }
     else
       resource[:content]
     end
@@ -81,7 +81,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
 
   def content=(value)
     return unless resource[:enforce_dashboard] == true
-      save_dashboard(value)
+    save_dashboard(value)
   end
 
   def create
