@@ -40,7 +40,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
   # Return the dashboard matching with the resource's title
   def find_dashboard
     return unless dashboards.find { |x| x['title'] == resource[:title] }
-   
+
     response = send_request('GET', format('%s/dashboards/db/%s', resource[:grafana_api_path], slug))
     if response.code != '200'
       raise format('Fail to retrieve dashboard %s (HTTP response: %s/%s)', resource[:title], response.code, response.body)
@@ -73,17 +73,15 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
 
   def content
     if resource[:enforce_dashboard] == true
-      @dashboard.reject {|k,v| k =~ /^id|version|title$/}
+      @dashboard.reject {|k| k =~ %r{^id|version|title$} }
     else
       resource[:content]
     end
   end
 
   def content=(value)
-    if resource[:enforce_dashboard] == true
+    return unless resource[:enforce_dashboard] == true
       save_dashboard(value)
-    end
-    
   end
 
   def create
