@@ -22,7 +22,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
   defaultfor kernel: 'Linux'
 
   def datasources
-    response = send_request('GET', '/api/datasources')
+    response = send_request('GET', format('%s/datasources', resource[:grafana_api_path]))
     if response.code != '200'
       raise format('Fail to retrieve datasources (HTTP response: %s/%s)', response.code, response.body)
     end
@@ -31,7 +31,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
       datasources = JSON.parse(response.body)
 
       datasources.map { |x| x['id'] }.map do |id|
-        response = send_request 'GET', format('/api/datasources/%s', id)
+        response = send_request('GET', format('%s/datasources/%s', resource[:grafana_api_path], id))
         if response.code != '200'
           raise format('Fail to retrieve datasource %d (HTTP response: %s/%s)', id, response.code, response.body)
         end
@@ -153,10 +153,10 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
     }
 
     if datasource.nil?
-      response = send_request('POST', '/api/datasources', data)
+      response = send_request('POST', format('%s/datasources', resource[:grafana_api_path]), data)
     else
       data[:id] = datasource[:id]
-      response = send_request 'PUT', format('/api/datasources/%s', datasource[:id]), data
+      response = send_request('PUT', format('%s/datasources/%s', resource[:grafana_api_path], datasource[:id]), data)
     end
 
     if response.code != '200'
@@ -166,7 +166,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
   end
 
   def delete_datasource
-    response = send_request 'DELETE', format('/api/datasources/%s', datasource[:id])
+    response = send_request('DELETE', format('%s/datasources/%s', resource[:grafana_api_path], datasource[:id]))
 
     if response.code != '200'
       raise format('Failed to delete datasource %s (HTTP response: %s/%s', resource[:name], response.code, response.body)
