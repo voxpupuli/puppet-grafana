@@ -40,6 +40,17 @@ Puppet::Type.newtype(:grafana_datasource) do
     desc 'The password for the Grafana server'
   end
 
+  newparam(:grafana_api_path) do
+    desc 'The absolute path to the API endpoint'
+    defaultto '/api'
+
+    validate do |value|
+      unless value =~ %r{^/.*/?api$}
+        raise ArgumentError, format('%s is not a valid API path', value)
+      end
+    end
+  end
+
   newproperty(:url) do
     desc 'The URL of the datasource'
 

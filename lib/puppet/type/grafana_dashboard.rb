@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 require 'json'
+require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:grafana_dashboard) do
   @doc = 'Manage dashboards in Grafana'
@@ -34,7 +35,8 @@ Puppet::Type.newtype(:grafana_dashboard) do
     end
 
     munge do |value|
-      JSON.parse(value)
+      value = JSON.parse(value).reject { |k| k =~ %r{^id|version|title$} }
+      value.sort.to_h
     end
 
     def should_to_s(value)
@@ -45,7 +47,7 @@ Puppet::Type.newtype(:grafana_dashboard) do
       end
     end
 
-    def to_s(value)
+    def is_to_s(value)
       should_to_s(value)
     end
   end
@@ -67,6 +69,22 @@ Puppet::Type.newtype(:grafana_dashboard) do
 
   newparam(:grafana_password) do
     desc 'The password for the Grafana server (optional)'
+  end
+
+  newparam(:grafana_api_path) do
+    desc 'The absolute path to the API endpoint'
+    defaultto '/api'
+
+    validate do |value|
+      unless value =~ %r{^/.*/?api$}
+        raise ArgumentError, format('%s is not a valid API path', value)
+      end
+    end
+  end
+
+  newparam(:enforce_dashboard, boolean: true, parent: Puppet::Parameter::Boolean) do
+    desc 'Boolean if the Dashboard should be enforced or not (optional)'
+    defaultto true
   end
 
   # rubocop:disable Style/SignalException
