@@ -66,6 +66,12 @@
 # A hash of plugins to be passed to `create_resources`, wraps around the
 # `grafana_plugin` resource.
 #
+# [*owner*]
+# User to run grafana under. Defaults to 'grafana'.
+#
+# [*group*]
+# Group to run grafana under. Defaults to 'grafana'.
+#
 # === Examples
 #
 #  class { '::grafana':
@@ -89,7 +95,9 @@ class grafana (
   String $rpm_iteration                = $::grafana::params::rpm_iteration,
   String $service_name                 = $::grafana::params::service_name,
   String $version                      = $::grafana::params::version,
-  Hash $plugins                        = {}
+  Hash $plugins                        = {},
+  String $owner                        = $::grafana::params::owner,
+  String $group                        = $::grafana::params::group,
 ) inherits grafana::params {
 
   contain grafana::install

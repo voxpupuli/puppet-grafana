@@ -117,6 +117,26 @@ class grafana::install {
             ensure  => $real_version,
             require => Package['fontconfig'],
           }
+
+          file { '/etc/sysconfig/grafana-server':
+            ensure  => file,
+            content => template('grafana/sysconfig.erb'),
+            require => Package[$::grafana::package_name],
+          }
+
+          file { '/usr/lib/systemd/system/grafana-server.service':
+            ensure  => file,
+            content => template('grafana/service.erb'),
+            require => Package[$::grafana::package_name],
+          }
+
+          file { $::grafana::data_dir:
+            ensure  => directory,
+            group   => $::grafana::group,
+            owner   => $::grafana::owner,
+            require => Package[$::grafana::package_name],
+          }
+
         }
         'Archlinux': {
           if $::grafana::manage_package_repo {
@@ -134,8 +154,8 @@ class grafana::install {
     'archive': {
       # create log directory /var/log/grafana (or parameterize)
 
-      if !defined(User['grafana']){
-        user { 'grafana':
+      if !defined(User[$::grafana::owner]){
+        user { $::grafana::owner:
           ensure => present,
           home   => $::grafana::install_dir,
         }
@@ -143,9 +163,9 @@ class grafana::install {
 
       file { $::grafana::install_dir:
         ensure  => directory,
-        group   => 'grafana',
-        owner   => 'grafana',
-        require => User['grafana'],
+        group   => $::grafana::group,
+        owner   => $::grafana::owner,
+        require => User[$::grafana::owner],
       }
 
       archive { '/tmp/grafana.tar.gz':
@@ -154,8 +174,8 @@ class grafana::install {
         extract_command => 'tar xfz %s --strip-components=1',
         extract_path    => $::grafana::install_dir,
         source          => $real_archive_source,
-        user            => 'grafana',
-        group           => 'grafana',
+        user            => $::grafana::owner,
+        group           => $::grafana::group,
         cleanup         => true,
         require         => File[$::grafana::install_dir],
       }
