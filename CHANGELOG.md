@@ -1,159 +1,109 @@
-# Releasing v3.0.0 (2017-03-29)
+# Change log
+
+All notable changes to this project will be documented in this file.
+Each new release typically also includes the latest modulesync defaults.
+These should not impact the functionality of the module.
+
+## [v3.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v3.1.0) (2017-07-04)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v3.0.0...v3.1.0)
 
 **Implemented enhancements:**
 
-- Implement package\_ensure param for Arch Linux [\#34](https://github.com/voxpupuli/puppet-grafana/pull/34) ([bastelfreak](https://github.com/bastelfreak))
+- Support custom plugins [\#44](https://github.com/voxpupuli/puppet-grafana/pull/44) ([bastelfreak](https://github.com/bastelfreak))
+
+**Closed issues:**
+
+- Usable for Grafana 4.x? [\#37](https://github.com/voxpupuli/puppet-grafana/issues/37)
+
+**Merged pull requests:**
+
+- Always use jessie apt repo when osfamily is Debian. [\#41](https://github.com/voxpupuli/puppet-grafana/pull/41) ([furhouse](https://github.com/furhouse))
+
+## [v3.0.0](https://github.com/voxpupuli/puppet-grafana/tree/v3.0.0) (2017-03-29)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.6.3...v3.0.0)
+
+**Implemented enhancements:**
+
+- implement package\_ensure param for archlinux [\#34](https://github.com/voxpupuli/puppet-grafana/pull/34) ([bastelfreak](https://github.com/bastelfreak))
 
 **Fixed bugs:**
 
+- implement package\\_ensure param for archlinux [\#34](https://github.com/voxpupuli/puppet-grafana/pull/34) ([bastelfreak](https://github.com/bastelfreak))
 - FIX configuration file ownership [\#30](https://github.com/voxpupuli/puppet-grafana/pull/30) ([cassianoleal](https://github.com/cassianoleal))
 
 **Closed issues:**
 
-- Configured Grafana Debian repo should contain current distribution [\#27](https://github.com/voxpupuli/puppet-grafana/issues/27)
+- Configured grafana debian repo should contain current distribution [\#27](https://github.com/voxpupuli/puppet-grafana/issues/27)
 - Error while creating dashboard [\#25](https://github.com/voxpupuli/puppet-grafana/issues/25)
 
 **Merged pull requests:**
 
+- Bump version, Update changelog [\#38](https://github.com/voxpupuli/puppet-grafana/pull/38) ([dhoppe](https://github.com/dhoppe))
 - Debian and RedHat based operating systems should use the repository by default [\#36](https://github.com/voxpupuli/puppet-grafana/pull/36) ([dhoppe](https://github.com/dhoppe))
-- Add support for Arch Linux [\#32](https://github.com/voxpupuli/puppet-grafana/pull/32) ([bastelfreak](https://github.com/bastelfreak))
+- Add support for archlinux [\#32](https://github.com/voxpupuli/puppet-grafana/pull/32) ([bastelfreak](https://github.com/bastelfreak))
 - Fix grafana\_dashboards [\#31](https://github.com/voxpupuli/puppet-grafana/pull/31) ([cassianoleal](https://github.com/cassianoleal))
-- Supoort jessie for install method repo [\#28](https://github.com/voxpupuli/puppet-grafana/pull/28) ([roock](https://github.com/roock))
+- supoort jessie for install method repo [\#28](https://github.com/voxpupuli/puppet-grafana/pull/28) ([roock](https://github.com/roock))
 - Use operatinsystemmajrelease fact in repo url [\#24](https://github.com/voxpupuli/puppet-grafana/pull/24) ([mirekys](https://github.com/mirekys))
 - The puppet 4-only release will start at 3.0.0 [\#21](https://github.com/voxpupuli/puppet-grafana/pull/21) ([rnelson0](https://github.com/rnelson0))
 
-# Releasing v2.6.1 (2017-01-18)
+## [v2.6.3](https://github.com/voxpupuli/puppet-grafana/tree/v2.6.3) (2017-01-18)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.6.2...v2.6.3)
 
-Just a notice: The next release will be a major one without Puppet 3 support!
-This is the last Release that supports it!
+## [v2.6.2](https://github.com/voxpupuli/puppet-grafana/tree/v2.6.2) (2017-01-18)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.6.1...v2.6.2)
 
-# Releasing v2.6.0 (2017-01-18)
+**Merged pull requests:**
 
-**Enhancements**
+- release 2.6.2 \(optimistic, i know ;\) [\#20](https://github.com/voxpupuli/puppet-grafana/pull/20) ([igalic](https://github.com/igalic))
 
-* add two types & provider: `grafana_datasource` & `grafana_dashboard` these
- type allow configuration of the datasource and the dashboard against the API
-* allow configuration of `repo_name` for all installation methods
-* be more conservative when installing from docker, while also allowing users to
-  override our `stable` choice
+## [v2.6.1](https://github.com/voxpupuli/puppet-grafana/tree/v2.6.1) (2017-01-18)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.6.0...v2.6.1)
 
-**Fixes**
+**Merged pull requests:**
 
-* ensure correct ownership of downloaded artefact
-* fix use-before definition of `$version`: https://github.com/bfraser/puppet-grafana/issues/87
+- release 2.6.1 [\#18](https://github.com/voxpupuli/puppet-grafana/pull/18) ([bastelfreak](https://github.com/bastelfreak))
 
-**Behind The Scenes**
+## [v2.6.0](https://github.com/voxpupuli/puppet-grafana/tree/v2.6.0) (2017-01-18)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.5.0...v2.6.0)
 
-* switch to voxpupuli/archive from camptocamp
+**Closed issues:**
 
-**Changes since forking from bfraser/puppet-grafana**
+- config.ini.erb key sort issue [\#10](https://github.com/voxpupuli/puppet-grafana/issues/10)
 
-* Add CONTRIBUTING.MD as well as our issues, spec etc… templates
-* update README and other files to point to forked repository
-* Rubocop and ruby-lint style-fixes!
-* test with puppet > 4.x
+**Merged pull requests:**
 
-# 2.5.0 (2015-10-31)
+- Update metadata.json [\#16](https://github.com/voxpupuli/puppet-grafana/pull/16) ([goya151](https://github.com/goya151))
+- Add changelog entries for changes since 2.5.0 [\#14](https://github.com/voxpupuli/puppet-grafana/pull/14) ([igalic](https://github.com/igalic))
+- modulesync 0.16.8 [\#13](https://github.com/voxpupuli/puppet-grafana/pull/13) ([bastelfreak](https://github.com/bastelfreak))
+- Update config.ini.erb [\#11](https://github.com/voxpupuli/puppet-grafana/pull/11) ([doomnuggets](https://github.com/doomnuggets))
+- fix datasource provider [\#6](https://github.com/voxpupuli/puppet-grafana/pull/6) ([andyroyle](https://github.com/andyroyle))
+- Bump min version\_requirement for Puppet + deps [\#5](https://github.com/voxpupuli/puppet-grafana/pull/5) ([juniorsysadmin](https://github.com/juniorsysadmin))
 
-**Enhancements**
-- Support for [Grafana 2.5](http://grafana.org/blog/2015/10/28/Grafana-2-5-Released.html). This is just a version bump to reflect that Grafana 2.5 is now installed by default
-- [PR #58](https://github.com/bfraser/puppet-grafana/pull/58) Sort ```cfg``` keys so ```config.ini``` content is not updated every Puppet run
+## [v2.5.0](https://github.com/voxpupuli/puppet-grafana/tree/v2.5.0) (2015-11-01)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.1.0...v2.5.0)
 
-**Fixes**
-- [Issue #52](https://github.com/bfraser/puppet-grafana/issues/52) Version logic moved to ```init.pp``` so overriding the version of Grafana to install works as intended
+## [v2.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v2.1.0) (2015-08-07)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v2.0.2...v2.1.0)
 
-**Behind The Scenes**
+## [v2.0.2](https://github.com/voxpupuli/puppet-grafana/tree/v2.0.2) (2015-04-23)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v1.0.1...v2.0.2)
 
-- [PR #59](https://github.com/bfraser/puppet-grafana/pull/59) More specific version requirements in ```metadata.json``` due to use of ```contain``` function
-- [PR #61](https://github.com/bfraser/puppet-grafana/pull/61) Fixed typos in ```metadata.json```
+## [v1.0.1](https://github.com/voxpupuli/puppet-grafana/tree/v1.0.1) (2015-02-27)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v1.0.0...v1.0.1)
 
-# 2.1.0 (2015-08-07)
+## [v1.0.0](https://github.com/voxpupuli/puppet-grafana/tree/v1.0.0) (2014-12-16)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v0.2.2...v1.0.0)
 
-**Enhancements**
-- Support for [Grafana 2.1](http://grafana.org/blog/2015/08/04/Grafana-2-1-Released.html)
-- [Issue #40](https://github.com/bfraser/puppet-grafana/issues/40) Support for [LDAP integration](http://docs.grafana.org/v2.1/installation/ldap/)
-- [PR #34](https://github.com/bfraser/puppet-grafana/pull/34) Support for 'repo' install method to install packages from [packagecloud](https://packagecloud.io/grafana) repositories
-- Addition of boolean parameter ```manage_package_repo``` to control whether the module will manage the package repository when using the 'repo' install method. See README.md for details
-- [PR #39](https://github.com/bfraser/puppet-grafana/pull/39) Ability to ensure a specific package version is installed when using the 'repo' install method
+## [v0.2.2](https://github.com/voxpupuli/puppet-grafana/tree/v0.2.2) (2014-10-28)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v0.2.1...v0.2.2)
 
-**Fixes**
-- [Issue #37](https://github.com/bfraser/puppet-grafana/issues/37) Archive install method: check if user and service are already defined before attempting to define them
-- [Issue #42](https://github.com/bfraser/puppet-grafana/issues/42) Package versioning for RPM / yum systems
-- [Issue #45](https://github.com/bfraser/puppet-grafana/issues/45) Fix resource dependency issues when ```manage_package_repo``` is false
+## [v0.2.1](https://github.com/voxpupuli/puppet-grafana/tree/v0.2.1) (2014-10-14)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v0.1.3...v0.2.1)
 
-**Behind The Scenes**
-- Use 40 character GPG key ID for packagecloud apt repository
+## [v0.1.3](https://github.com/voxpupuli/puppet-grafana/tree/v0.1.3) (2014-07-04)
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v0.1.2...v0.1.3)
 
-# 2.0.2 (2015-04-30)
+## [v0.1.2](https://github.com/voxpupuli/puppet-grafana/tree/v0.1.2) (2014-06-30)
 
-**Enhancements**
-- Support for Grafana 2.0. Users of Grafana 1.x should stick to version 1.x of the Puppet module
-- Support 'archive', 'docker' and 'package' install methods
-- Ability to supply a hash of parameters to the Docker container when using 'docker' install method
-- [PR #24](https://github.com/bfraser/puppet-grafana/pull/24) Ability to configure Grafana using configuration hash parameter ```cfg```
 
-**Behind The Scenes**
-- Update module operatingsystem support, tags, Puppet requirements
-- Tests for 'archive' and 'package' install methods
-
-# 1.0.1 (2015-02-27)
-
-**Enhancements**
-- New parameter for Grafana admin password
-
-**Fixes**
-- Package install method now makes use of install_dir for config.js path
-
-**Behind The Scenes**
-- Add archive module to .fixtures.yml
-- Unquote booleans to make lint happy
-- Fix license identifier and unbounded dependencies in module metadata
-- Allow Travis to fail on Ruby 1.8.7
-- More Puppet versions are tested by Travis
-
-# 1.0.0 (2014-12-16)
-
-**Enhancements**
-- Add max_search_results parameter
-- Install Grafana 1.9.0 by default
-
-**Documentation**
-- Add download_url and install_method parameters to README
-
-**Behind The Scenes**
-- [Issue #6](https://github.com/bfraser/puppet-grafana/issues/6) Replace gini/archive dependency with camptocamp/archive
-- Addition of CHANGELOG
-- Style fixes
-- Removal of vagrant-wrapper gem
-- Fancy badges for build status
-
-# 0.2.2 (2014-10-27)
-
-**Enhancements**
-- Add default_route parameter to manage start dashboard
-
-**Fixes**
-- Symlink behavior
-
-**Behind The Scenes**
-- [Issue #9](https://github.com/bfraser/puppet-grafana/issues/9) Remove stdlib inclusion from manifest
-
-# 0.2.1 (2014-10-14)
-
-**Enhancements**
-- Support for multiple datasources
-- Install Grafana 1.8.1 by default
-
-**Behind The Scenes**
-- Added RSpec tests
-- Add stdlib as a module dependency
-- Add operating system compatibility
-
-# 0.1.3 (2014-07-03)
-
-**Enhancements**
-- Added support for InfluxDB
-
-# 0.1.2 (2014-06-30)
-
-First release on the Puppet Forge
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*

@@ -1,6 +1,6 @@
 {
   "name": "puppet-grafana",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": "Vox Pupuli",
   "summary": "This module provides Grafana, a dashboard and graph editor for Graphite and InfluxDB.",
   "license": "Apache-2.0",
@@ -22,11 +22,11 @@
     },
     {
       "name": "puppetlabs/apt",
-      "version_requirement": ">=2.1.0 < 3.0.0"
+      "version_requirement": ">= 2.1.0 < 5.0.0"
     },
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">=4.6.0 < 5.0.0"
+      "version_requirement": ">= 4.6.0 < 5.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -61,7 +61,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.6.1 < 5.0.0"
+      "version_requirement": ">= 4.6.1 < 6.0.0"
     }
   ],
   "tags": [
