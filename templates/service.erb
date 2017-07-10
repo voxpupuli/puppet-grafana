@@ -6,9 +6,9 @@ After=network-online.target
 After=postgresql.service mariadb.service mysql.service
 
 [Service]
-EnvironmentFile=/etc/sysconfig/<%= @service_name %>
-User=<%= @owner %>
-Group=<%= @group %>
+EnvironmentFile=/etc/sysconfig/<%= scope['grafana::service_name'] %>
+User=<%= scope['grafana::owner'] %>
+Group=<%= scope['grafana::group'] %>
 Type=simple
 Restart=on-failure
 WorkingDirectory=/usr/share/grafana

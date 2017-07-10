@@ -1,12 +1,12 @@
-GRAFANA_USER=<%= @owner %>
+GRAFANA_USER=<%= scope['grafana::owner'] %>
 
-GRAFANA_GROUP=<%= @group %>
+GRAFANA_GROUP=<%= scope['grafana::group'] %>
 
-GRAFANA_HOME=<%= @install_dir %>
+GRAFANA_HOME=<%= scope['grafana::install_dir'] %>
 
 LOG_DIR=/var/log/grafana
 
-DATA_DIR=<%= @data_dir %>
+DATA_DIR=<%= scope['grafana::data_dir'] %>
 
 MAX_OPEN_FILES=10000
 
@@ -16,4 +16,4 @@ CONF_FILE=/etc/grafana/grafana.ini
 
 RESTART_ON_UPGRADE=true
 
-PLUGINS_DIR=<%= @data_dir %>/plugins
+PLUGINS_DIR=<%= scope['grafana::data_dir'] %>/plugins
