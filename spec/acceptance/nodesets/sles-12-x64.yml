@@ -1,0 +1,10 @@
+HOSTS:
+  sles-12-x64:
+    roles:
+      - default
+    platform: sles-12-x64
+    box: suse/sles12sp1
+    box_url: https://vagrantcloud.com/suse/boxes/sles12sp1
+    hypervisor: vagrant
+CONFIG:
+  type: foss

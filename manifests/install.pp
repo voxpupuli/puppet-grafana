@@ -14,9 +14,9 @@ class grafana::install {
   }
   else {
     $real_package_source = $::osfamily ? {
-      /(RedHat|Amazon)/ => "${base_url}/grafana-${::grafana::version}-${::grafana::rpm_iteration}.x86_64.rpm",
-      'Debian'          => "${base_url}/builds/grafana_${::grafana::version}_amd64.deb",
-      default           => $real_archive_source,
+      /(RedHat|Amazon|Suse)/ => "${base_url}/grafana-${::grafana::version}-${::grafana::rpm_iteration}.x86_64.rpm",
+      'Debian'               => "${base_url}/builds/grafana_${::grafana::version}_amd64.deb",
+      default                => $real_archive_source,
     }
   }
 
@@ -55,6 +55,20 @@ class grafana::install {
             provider => 'rpm',
             source   => $real_package_source,
             require  => Package['fontconfig'],
+          }
+        }
+        'Suse': {
+          package { $::grafana::package_name:
+            ensure          => present,
+            provider        => 'rpm',
+            source          => $real_package_source,
+            install_options => ['--nodeps'],
+          }
+          file { '/var/run/grafana':
+            ensure  => directory,
+            owner   => 'grafana',
+            group   => 'grafana',
+            require => Package[$::grafana::package_name],
           }
         }
         default: {
@@ -126,6 +140,9 @@ class grafana::install {
             ensure  => 'present', # pacman provider doesn't have feature versionable
           }
         }
+        'Suse': {
+          fail('Repo install method is not supported on Suse')
+        }
         default: {
           fail("${::operatingsystem} not supported")
         }
@@ -133,6 +150,12 @@ class grafana::install {
     }
     'archive': {
       # create log directory /var/log/grafana (or parameterize)
+
+      if !defined(Group['grafana']){
+        group { 'grafana':
+          ensure => present,
+        }
+      }
 
       if !defined(User['grafana']){
         user { 'grafana':
