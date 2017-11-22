@@ -70,6 +70,10 @@ describe 'grafana' do
           describe 'install the package' do
             it { is_expected.to contain_package('grafana').with_provider('rpm') }
           end
+        when 'Suse'
+          describe 'install the package' do
+            it { is_expected.to contain_package('grafana').with_provider('rpm') }
+          end
         end
       end
 
