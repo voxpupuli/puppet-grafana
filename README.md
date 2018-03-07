@@ -419,7 +419,7 @@ grafana_datasource { 'influxdb':
   grafana_url       => 'http://localhost:3000',
   grafana_user      => 'admin',
   grafana_password  => '5ecretPassw0rd',
-  grafana_api_path  => '/grafana/api'
+  grafana_api_path  => '/grafana/api',
   type              => 'influxdb',
   organization      => 'NewOrg',
   url               => 'http://localhost:8086',
