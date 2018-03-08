@@ -117,6 +117,9 @@ class grafana::install {
             ensure  => $real_version,
             require => Package['fontconfig'],
           }
+          -> yum::versionlock{"0:${::grafana::package_name}-${::grafana::version}-${::grafana::rpm_iteration}.*":
+               ensure => present,
+          }
         }
         'Archlinux': {
           if $::grafana::manage_package_repo {
