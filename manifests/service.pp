@@ -32,7 +32,7 @@ class grafana::service {
         service { $::grafana::service_name:
           ensure     => running,
           provider   => base,
-          binary     => "su - grafana -c '${service_path} -config=${service_config} -homepath=${::grafana::install_dir} web &'",
+          binary     => "su - ${::grafana::grafana_system_user} -c '${service_path} -config=${service_config} -homepath=${::grafana::install_dir} web &'",
           hasrestart => false,
           hasstatus  => false,
           status     => "ps -ef | grep ${::grafana::service_name} | grep -v grep",

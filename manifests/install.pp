@@ -134,8 +134,8 @@ class grafana::install {
     'archive': {
       # create log directory /var/log/grafana (or parameterize)
 
-      if !defined(User['grafana']){
-        user { 'grafana':
+      if !defined(User[$::grafana::grafana_system_user]){
+        user { $::grafana::grafana_system_user:
           ensure => present,
           home   => $::grafana::install_dir,
         }
@@ -143,9 +143,9 @@ class grafana::install {
 
       file { $::grafana::install_dir:
         ensure  => directory,
-        group   => 'grafana',
-        owner   => 'grafana',
-        require => User['grafana'],
+        group   => $::grafana::grafana_system_user,
+        owner   => $::grafana::grafana_system_group,
+        require => User[$::grafana::grafana_system_user],
       }
 
       archive { '/tmp/grafana.tar.gz':
@@ -154,8 +154,8 @@ class grafana::install {
         extract_command => 'tar xfz %s --strip-components=1',
         extract_path    => $::grafana::install_dir,
         source          => $real_archive_source,
-        user            => 'grafana',
-        group           => 'grafana',
+        user            => $::grafana::grafana_system_user,
+        group           => $::grafana::grafana_system_group,
         cleanup         => true,
         require         => File[$::grafana::install_dir],
       }

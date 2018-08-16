@@ -364,38 +364,11 @@ sysconfig => {
 }
 ```
 
-### Advanced usage
+##### `grafana_system_user`
+Default System User.
 
-The archive install method will create the user and a "command line" service by
-default. There are no extra parameters to manage user/service for archive.
-However, both check to see if they are defined before defining. This way you can
-create your own user and service with your own specifications. (sort of overriding)
-The service can be a bit tricky, in this example below, the class
-sensu_install::grafana::service creates a startup script and a service{'grafana-server':}
-
-Example:
-
-```puppet
-    user { 'grafana':
-      ensure   => present,
-      uid      => '1234',
-    }
-    ->
-    class { 'grafana':
-      install_method  => 'archive',
-    }
-
-    include sensu_install::grafana::service
-
-    # run your service after install/config but before grafana::service
-    Class[::grafana::install]
-    ->
-    Class[sensu_install::grafana::service]
-    ->
-    Class[::grafana::service]
-
-```
-
+##### `grafana_system_group`
+Default System Group.
 
 #### Using a sub-path for Grafana API
 

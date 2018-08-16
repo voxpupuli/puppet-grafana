@@ -100,6 +100,12 @@
 # Example:
 #   sysconfig => { 'http_proxy' => 'http://proxy.example.com/' }
 #
+# [*grafana_system_user*]
+# Default System user.
+#
+# [*grafana_system_group*]
+# Default System group.
+#
 # === Examples
 #
 #  class { '::grafana':
@@ -131,6 +137,8 @@ class grafana (
   Boolean $create_subdirs_provisioning  = $::grafana::params::create_subdirs_provisioning,
   Optional[String] $sysconfig_location  = $::grafana::params::sysconfig_location,
   Optional[Hash] $sysconfig             = undef,
+  String $grafana_system_user           = $::grafana::params::grafana_system_user,
+  String $grafana_system_group          = $::grafana::params::grafana_system_group,
 ) inherits grafana::params {
 
   contain grafana::install
