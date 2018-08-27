@@ -37,7 +37,11 @@ group :development do
   gem 'travis',                   :require => false
   gem 'travis-lint',              :require => false
   gem 'guard-rake',               :require => false
-  gem 'overcommit', '>= 0.39.1',  :require => false
+  if overcommit_version = ENV['OVERCOMMIT_VERSION']
+    gem 'overcommit', *location_for(overcommit_version)
+  else
+    gem 'overcommit', '>= 0.39.1',  :require => false 
+  end
 end
 
 group :system_tests do
