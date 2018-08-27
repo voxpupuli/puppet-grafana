@@ -12,7 +12,7 @@ matrix:
   include:
   - rvm: 1.9.3
     bundler_args: --without system_tests development release
-    env: PUPPET_VERSION="~> 4.0" CHECK=test BEAKER_VERSION="~> 2.50" 
+    env: PUPPET_VERSION="~> 4.0" CHECK=test BEAKER_VERSION="~> 2.50"
   - rvm: 2.1.9
     bundler_args: --without system_tests development release
     env: PUPPET_VERSION="~> 4.0" CHECK=test PARALLEL_TEST_PROCESSORS=12
