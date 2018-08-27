@@ -31,17 +31,14 @@ group :test do
   gem 'rack', '~> 1.0',                                             :require => false if RUBY_VERSION < '2.2.2'
   gem 'parallel_tests',                                             :require => false
   gem 'toml',                                                       :require => false
+if RUBY_VERSION > '1.9.3'
+  gem 'overcommit', '>= 0.39.1',                                    :require => false
 end
 
 group :development do
   gem 'travis',                   :require => false
   gem 'travis-lint',              :require => false
   gem 'guard-rake',               :require => false
-  if overcommit_version = ENV['OVERCOMMIT_VERSION']
-    gem 'overcommit', *location_for(overcommit_version)
-  else
-    gem 'overcommit', '>= 0.39.1',  :require => false 
-  end
 end
 
 group :system_tests do
