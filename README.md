@@ -315,6 +315,20 @@ which is not part of grafana's syntax. This option will be extracted
 from the hash, and used to "source" a directory of dashboards. See
 **Advanced Usage** for details.
 
+#### `provisioning_dashboards_file`
+
+A String that is used as the target file name for the dashabords
+provisioning file. This way the module can be used to generate placeholder
+files so password can be sepecified in a different iteration, avoiding them
+to be put in the module code.
+
+#### `provisioning_datasources_file`
+
+A String that is used as the target file name for the datasources
+provisioning file. This way the module can be used to generate placeholder
+files so password can be sepecified in a different iteration, avoiding them
+to be put in the module code.
+
 ##### `rpm_iteration`
 
 Used when installing Grafana from package ('package' or 'repo' install methods)
@@ -617,6 +631,15 @@ grafana_plugin { 'grafana-simple-json-datasource':
 }
 ```
 
+It is possible to specify a custom plugin repository to install a plugin. This will use the --repo option for plugin installation with grafana_cli. 
+
+```puppet
+grafana_plugin { 'grafana-simple-json-datasource':
+  ensure    => present,
+  repo => 'https://nexus.company.com/grafana/plugins',
+}
+```
+
 ##### `grafana::user`
 
 Creates and manages a global grafana user via the API.
@@ -641,7 +664,7 @@ provisioning](http://docs.grafana.org/administration/provisioning/).
 
 This module will provision grafana by placing yaml files into
 `/etc/grafana/provisioning/datasources` and
-`/etc/grafana/provisioning/dashboards`.
+`/etc/grafana/provisioning/dashboards` by default.
 
 ##### Example datasource
 
@@ -682,7 +705,7 @@ grafana::provisioning_datasources:
 
 An example puppet hash for provisioning dashboards. The module will
 place the hash as a yaml file into
-`/etc/grafana/provisioning/dashboards/puppetprovisioned.yaml`. More details follow the examples.
+`/etc/grafana/provisioning/dashboards/puppetprovisioned.yaml` by default. More details follow the examples.
 
 ```puppet
 class { 'grafana':
