@@ -12,8 +12,8 @@ class grafana::config {
         file {  $::grafana::cfg_location:
           ensure  => file,
           content => template('grafana/config.ini.erb'),
-          owner   => 'grafana',
-          group   => 'grafana',
+          owner   => $::grafana::grafana_system_user,
+          group   => $::grafana::grafana_system_group,
         }
       }
     }
@@ -24,8 +24,8 @@ class grafana::config {
       file {  $::grafana::cfg_location:
         ensure  => file,
         content => template('grafana/config.ini.erb'),
-        owner   => 'grafana',
-        group   => 'grafana',
+        owner   => $::grafana::grafana_system_user,
+        group   => $::grafana::grafana_system_group,
       }
 
       $sysconfig = $::grafana::sysconfig
@@ -42,8 +42,8 @@ class grafana::config {
 
       file { "${::grafana::data_dir}/plugins":
         ensure => directory,
-        owner  => 'grafana',
-        group  => 'grafana',
+        owner  => $::grafana::grafana_system_user,
+        group  => $::grafana::grafana_system_group,
         mode   => '0750',
       }
     }
@@ -54,14 +54,14 @@ class grafana::config {
       file { "${::grafana::install_dir}/conf/custom.ini":
         ensure  => file,
         content => template('grafana/config.ini.erb'),
-        owner   => 'grafana',
-        group   => 'grafana',
+        owner   => $::grafana::grafana_system_user,
+        group   => $grafana::grafana_system_group,
       }
 
       file { "${::grafana::data_dir}/plugins":
         ensure => directory,
-        owner  => 'grafana',
-        group  => 'grafana',
+        owner  => $::grafana::grafana_system_user,
+        group  => $::grafana::grafana_system_group,
         mode   => '0750',
       }
     }
@@ -75,8 +75,8 @@ class grafana::config {
     file { '/etc/grafana/ldap.toml':
       ensure  => file,
       content => inline_template("<%= require 'toml'; TOML::Generator.new(@ldap_cfg).body %>\n"),
-      owner   => 'grafana',
-      group   => 'grafana',
+      owner   => $::grafana::grafana_system_user,
+      group   => $::grafana::grafana_system_group,
     }
   }
 
@@ -93,8 +93,8 @@ class grafana::config {
       #   - pdashboards
       file { $grafana::provisioning_dashboards_file:
         ensure  => file,
-        owner   => 'grafana',
-        group   => 'grafana',
+        owner   => $::grafana::grafana_system_user,
+        group   => $::grafana::grafana_system_group,
         mode    => '0640',
         content => epp('grafana/pdashboards.yaml.epp'),
         notify  => Service[$grafana::service_name],
@@ -114,8 +114,8 @@ class grafana::config {
 
           file { $options['path'] :
             ensure  => directory,
-            owner   => 'grafana',
-            group   => 'grafana',
+            owner   => $::grafana::grafana_system_user,
+            group   => $::grafana::grafana_system_group,
             mode    => '0750',
             recurse => true,
             purge   => true,
@@ -132,8 +132,8 @@ class grafana::config {
       #   - pdatasources
       file { $grafana::provisioning_datasources_file:
         ensure  => file,
-        owner   => 'grafana',
-        group   => 'grafana',
+        owner   => $::grafana::grafana_system_user,
+        group   => $::grafana::grafana_system_group,
         mode    => '0640',
         content => epp('grafana/pdatasources.yaml.epp'),
         notify  => Service[$grafana::service_name],
