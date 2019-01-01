@@ -109,4 +109,26 @@ describe 'grafana class' do
       apply_manifest(pp, catch_changes: true)
     end
   end
+
+
+  context 'with install_method set to archive' do
+
+
+    it 'works idempotently with no errors' do
+      pp = <<-EOS
+        class { 'grafana':
+          install_method => 'archive',
+          archive_source => 'https://dl.grafana.com/oss/release/grafana-5.4.2.linux-amd64.tar.gz',
+          install_dir    => '/usr/share/grafana',
+      }
+      EOS
+
+      # Old install stop & cleanup
+      shell('systemctl stop grafana-server')
+      shell('rm -rf /usr/share/grafana')
+      # Run it twice and test for idempotency
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
+    end
+  end
 end
