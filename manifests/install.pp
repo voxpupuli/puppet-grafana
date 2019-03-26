@@ -104,8 +104,8 @@ class grafana::install {
               'beta'   => 'https://packages.grafana.com/oss/rpm-beta',
             }
 
-            yumrepo { 'grafana':
-              descr    => 'grafana repo',
+            yumrepo { "grafana-${grafana::repo_name}":
+              descr    => "grafana-${grafana::repo_name} repo",
               baseurl  => $baseurl,
               gpgcheck => 1,
               gpgkey   => 'https://packages.grafana.com/gpg.key',
