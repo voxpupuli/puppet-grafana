@@ -43,6 +43,16 @@ Puppet::Type.newtype(:grafana_user) do
 
   newproperty(:password) do
     desc 'The password for the user'
+
+    # rubocop:disable Style/PredicateName
+    def is_to_s(_currentvalue)
+      '[old password redacted]'
+    end
+    # rubocop:enable Style/PredicateName
+
+    def should_to_s(_newvalue)
+      '[new password redacted]'
+    end
   end
 
   newproperty(:email) do

@@ -58,6 +58,16 @@ Puppet::Type.newtype(:grafana_datasource) do
 
   newproperty(:password) do
     desc 'The password for the datasource (optional)'
+
+    # rubocop:disable Style/PredicateName
+    def is_to_s(_currentvalue)
+      '[old password redacted]'
+    end
+    # rubocop:enable Style/PredicateName
+
+    def should_to_s(_newvalue)
+      '[new password redacted]'
+    end
   end
 
   newproperty(:database) do
@@ -90,6 +100,16 @@ Puppet::Type.newtype(:grafana_datasource) do
   newproperty(:basic_auth_password) do
     desc 'The password for basic auth if enabled'
     defaultto ''
+
+    # rubocop:disable Style/PredicateName
+    def is_to_s(_currentvalue)
+      '[old password redacted]'
+    end
+    # rubocop:enable Style/PredicateName
+
+    def should_to_s(_newvalue)
+      '[new password redacted]'
+    end
   end
 
   newproperty(:with_credentials) do
