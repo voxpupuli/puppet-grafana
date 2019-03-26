@@ -106,7 +106,6 @@ class grafana::install {
 
             yumrepo { 'grafana':
               ensure => 'absent',
-              descr  => 'grafana repo',
               before => Package[$::grafana::package_name],
             }
 
