@@ -104,6 +104,12 @@ class grafana::install {
               'beta'   => 'https://packages.grafana.com/oss/rpm-beta',
             }
 
+            yumrepo { 'grafana':
+              ensure => 'absent',
+              descr  => 'grafana repo',
+              before => Package[$::grafana::package_name],
+            }
+
             yumrepo { "grafana-${grafana::repo_name}":
               descr    => "grafana-${grafana::repo_name} repo",
               baseurl  => $baseurl,
