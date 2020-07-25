@@ -9,7 +9,7 @@ class grafana::config {
         $cfg = $grafana::cfg
         $myprovision = false
 
-        file {  'grafana.ini':
+        file { 'grafana.ini':
           ensure  => file,
           path    => $grafana::cfg_location,
           content => template('grafana/config.ini.erb'),
@@ -22,7 +22,7 @@ class grafana::config {
       $cfg = $grafana::cfg
       $myprovision = true
 
-      file {  'grafana.ini':
+      file { 'grafana.ini':
         ensure  => file,
         path    => $grafana::cfg_location,
         content => template('grafana/config.ini.erb'),
@@ -36,7 +36,7 @@ class grafana::config {
       if $sysconfig_location and $sysconfig {
         $changes = $sysconfig.map |$key, $value| { "set ${key} ${value}" }
 
-        augeas{'sysconfig/grafana-server':
+        augeas { 'sysconfig/grafana-server':
           context => "/files${$sysconfig_location}",
           changes => $changes,
         }
@@ -141,6 +141,5 @@ class grafana::config {
         notify  => Service['grafana'],
       }
     }
-
   }
 }

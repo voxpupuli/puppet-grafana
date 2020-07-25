@@ -134,7 +134,6 @@ class grafana (
   Optional[String] $sysconfig_location,
   Optional[Hash] $sysconfig,
 ) {
-
   contain grafana::install
   contain grafana::config
   contain grafana::service
