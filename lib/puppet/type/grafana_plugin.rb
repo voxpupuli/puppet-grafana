@@ -14,7 +14,7 @@ manages grafana plugins
 @example Install a grafana plugin from a plugin url
  grafana_plugin { 'grafana-simple-json-datasource':
    ensure => present,
-   plugin_url   => 'https://github.com/example/example-custom-plugin/zipball/v1.0.0'
+   plugin_url => 'https://github.com/example/example-custom-plugin/zipball/v1.0.0'
  }
 
 @example Uninstall a grafana plugin
