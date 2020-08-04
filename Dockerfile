@@ -14,6 +14,7 @@ RUN bundle install --without system_tests development release --path=${BUNDLE_PA
 
 COPY . .
 
+ENV LANG=C.UTF-8
 RUN bundle install
 RUN bundle exec rake release_checks
 
