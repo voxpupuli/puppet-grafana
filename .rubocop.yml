@@ -152,7 +152,7 @@ Style/Attr:
   Enabled: True
 
 Style/BracesAroundHashParameters:
-  Enabled: True
+  Enabled: False
 
 Style/CaseEquality:
   Enabled: True
@@ -528,6 +528,9 @@ RSpec/RepeatedDescription:
 RSpec/NestedGroups:
   Enabled: False
 
+RSpec/MultipleExpectations:
+  Enabled: false
+
 # this is broken on ruby1.9
 Layout/IndentHeredoc:
   Enabled: False
@@ -543,8 +546,4 @@ Style/FormatStringToken:
 # This is useful, but sometimes a little too picky about where unit tests files
 # are located.
 RSpec/FilePath:
-  Enabled: false
-
-# silence it to support older jruby (<= v1.9) which can not handle e.g. %i[]
-Style/WordArray:
   Enabled: false
