@@ -99,9 +99,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
   def find_folder
     folders unless @folders
 
-    @folders.each do |folder|
-      @folder = folder if folder['title'] == resource[:title]
-    end
+    @folder = @folders.find { |folder| folder['title'] == resource[:folder] }
   end
 
   def save_folder(folder)
