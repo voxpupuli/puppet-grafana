@@ -91,7 +91,7 @@ class grafana::config {
 
     $ldap_cfg_toml = inline_template($template_body.join(''))
 
-    file { '/etc/grafana/ldap.toml':
+    file { $grafana::ldap_cfg_location:
       ensure  => file,
       content => $ldap_cfg_toml,
       owner   => 'grafana',
