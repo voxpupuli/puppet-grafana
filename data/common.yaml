@@ -3,6 +3,7 @@ grafana::archive_source: ~
 grafana::cfg_location: '/etc/grafana/grafana.ini'
 grafana::cfg: {}
 grafana::ldap_cfg: ~
+grafana::ldap_cfg_location: '/etc/grafana/ldap.toml'
 grafana::container_cfg: false
 grafana::container_params: {}
 grafana::docker_image: 'grafana/grafana'
