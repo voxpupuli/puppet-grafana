@@ -138,6 +138,7 @@ class grafana (
   String $cfg_location,
   Hash $cfg,
   Optional[Variant[Hash,Array]] $ldap_cfg,
+  Stdlib::Absolutepath $ldap_cfg_location,
   Boolean $container_cfg,
   Hash $container_params,
   String $docker_image,
