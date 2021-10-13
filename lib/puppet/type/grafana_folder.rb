@@ -44,11 +44,19 @@ Puppet::Type.newtype(:grafana_folder) do
   end
 
   newparam(:organization) do
-    desc 'The organization name to create the datasource on'
+    desc 'The organization name to create the folder on'
     defaultto 1
+  end
+
+  newproperty(:permissions, array_matching: :all) do
+    desc 'The permissions of the folder'
   end
 
   autorequire(:service) do
     'grafana-server'
+  end
+
+  autorequire(:grafana_conn_validator) do
+    'grafana'
   end
 end

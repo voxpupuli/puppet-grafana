@@ -62,7 +62,8 @@ describe 'grafana' do
             {
               'grafana-wizzle' => { 'ensure' => 'present' },
               'grafana-woozle' => { 'ensure' => 'absent' },
-              'grafana-plugin' => { 'ensure' => 'present', 'repo' => 'https://nexus.company.com/grafana/plugins' }
+              'grafana-plugin' => { 'ensure' => 'present', 'repo' => 'https://nexus.company.com/grafana/plugins' },
+              'grafana-plugin-url' => { 'ensure' => 'present', 'plugin_url' => 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download' }
             }
           }
         end
@@ -70,8 +71,12 @@ describe 'grafana' do
         it { is_expected.to contain_grafana_plugin('grafana-wizzle').with(ensure: 'present') }
         it { is_expected.to contain_grafana_plugin('grafana-woozle').with(ensure: 'absent').that_notifies('Class[grafana::service]') }
 
-        describe 'install plugin with pluginurl' do
+        describe 'install plugin with plugin repo' do
           it { is_expected.to contain_grafana_plugin('grafana-plugin').with(ensure: 'present', repo: 'https://nexus.company.com/grafana/plugins') }
+        end
+
+        describe 'install plugin with plugin url' do
+          it { is_expected.to contain_grafana_plugin('grafana-plugin-url').with(ensure: 'present', plugin_url: 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download') }
         end
       end
 
@@ -266,11 +271,7 @@ describe 'grafana' do
                   { 'host' => 'server1',
                     'use_ssl'         => true,
                     'search_filter'   => '(sAMAccountName=%s)',
-                    'search_base_dns' => ['dc=domain1,dc=com'] },
-                  { 'host' => 'server2',
-                    'use_ssl'         => true,
-                    'search_filter'   => '(sAMAccountName=%s)',
-                    'search_base_dns' => ['dc=domain2,dc=com'] }
+                    'search_base_dns' => ['dc=domain1,dc=com'] }
                 ],
                 'servers.attributes' => {
                   'name'      => 'givenName',
@@ -299,8 +300,73 @@ describe 'grafana' do
                            "search_filter = \"(sAMAccountName=%s)\"\n"\
                            "use_ssl = true\n"\
                            "\n"\
-                          "[[servers]]\n"\
-                           "host = \"server2\"\n"\
+                           "[servers.attributes]\n"\
+                           "email = \"email\"\n"\
+                           "member_of = \"memberOf\"\n"\
+                           "name = \"givenName\"\n"\
+                           "surname = \"sn\"\n"\
+                           "username = \"sAMAccountName\"\n"\
+                           "\n"
+
+          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_expected) }
+        end
+      end
+
+      context 'multiple ldap configuration' do
+        describe 'should correctly transform ldap config param into Grafana ldap.toml' do
+          let(:params) do
+            {
+              cfg: {},
+              ldap_cfg: [
+                {
+                  'servers' => [
+                    { 'host' => 'server1a server1b',
+                      'use_ssl'         => true,
+                      'search_filter'   => '(sAMAccountName=%s)',
+                      'search_base_dns' => ['dc=domain1,dc=com'] }
+                  ],
+                  'servers.attributes' => {
+                    'name'      => 'givenName',
+                    'surname'   => 'sn',
+                    'username'  => 'sAMAccountName',
+                    'member_of' => 'memberOf',
+                    'email'     => 'email'
+                  }
+                },
+                {
+                  'servers' => [
+                    { 'host' => 'server2a server2b',
+                      'use_ssl'         => true,
+                      'search_filter'   => '(sAMAccountName=%s)',
+                      'search_base_dns' => ['dc=domain2,dc=com'] }
+                  ],
+                  'servers.attributes' => {
+                    'name'      => 'givenName',
+                    'surname'   => 'sn',
+                    'username'  => 'sAMAccountName',
+                    'member_of' => 'memberOf',
+                    'email'     => 'email'
+                  }
+                }
+              ]
+            }
+          end
+
+          ldap_expected = "\n[[servers]]\n"\
+                           "host = \"server1a server1b\"\n"\
+                           "search_base_dns = [\"dc=domain1,dc=com\"]\n"\
+                           "search_filter = \"(sAMAccountName=%s)\"\n"\
+                           "use_ssl = true\n"\
+                           "\n"\
+                           "[servers.attributes]\n"\
+                           "email = \"email\"\n"\
+                           "member_of = \"memberOf\"\n"\
+                           "name = \"givenName\"\n"\
+                           "surname = \"sn\"\n"\
+                           "username = \"sAMAccountName\"\n"\
+                           "\n"\
+                           "\n[[servers]]\n"\
+                           "host = \"server2a server2b\"\n"\
                            "search_base_dns = [\"dc=domain2,dc=com\"]\n"\
                            "search_filter = \"(sAMAccountName=%s)\"\n"\
                            "use_ssl = true\n"\
@@ -314,6 +380,67 @@ describe 'grafana' do
                            "\n"
 
           it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_expected) }
+        end
+      end
+
+      context 'provisioning_dashboards defined' do
+        let(:params) do
+          {
+            version: '6.0.0',
+            provisioning_dashboards: {
+              apiVersion: 1,
+              providers: [
+                {
+                  name: 'default',
+                  orgId: 1,
+                  folder: '',
+                  type: 'file',
+                  disableDeletion: true,
+                  options: {
+                    path: '/var/lib/grafana/dashboards',
+                    puppetsource: 'puppet:///modules/my_custom_module/dashboards'
+                  }
+                }
+              ]
+            }
+          }
+        end
+
+        it do
+          is_expected.to contain_file('/var/lib/grafana/dashboards').with(
+            ensure: 'directory',
+            owner: 'grafana',
+            group: 'grafana',
+            mode: '0750',
+            recurse: true,
+            purge: true,
+            source: 'puppet:///modules/my_custom_module/dashboards'
+          )
+        end
+
+        context 'without puppetsource defined' do
+          let(:params) do
+            {
+              version: '6.0.0',
+              provisioning_dashboards: {
+                apiVersion: 1,
+                providers: [
+                  {
+                    name: 'default',
+                    orgId: 1,
+                    folder: '',
+                    type: 'file',
+                    disableDeletion: true,
+                    options: {
+                      path: '/var/lib/grafana/dashboards'
+                    }
+                  }
+                ]
+              }
+            }
+          end
+
+          it { is_expected.not_to contain_file('/var/lib/grafana/dashboards') }
         end
       end
 

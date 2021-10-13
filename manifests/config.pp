@@ -9,7 +9,7 @@ class grafana::config {
         $cfg = $grafana::cfg
         $myprovision = false
 
-        file {  'grafana.ini':
+        file { 'grafana.ini':
           ensure  => file,
           path    => $grafana::cfg_location,
           content => template('grafana/config.ini.erb'),
@@ -23,7 +23,7 @@ class grafana::config {
       $cfg = $grafana::cfg
       $myprovision = true
 
-      file {  'grafana.ini':
+      file { 'grafana.ini':
         ensure  => file,
         path    => $grafana::cfg_location,
         content => template('grafana/config.ini.erb'),
@@ -38,8 +38,8 @@ class grafana::config {
       if $sysconfig_location and $sysconfig {
         $changes = $sysconfig.map |$key, $value| { "set ${key} ${value}" }
 
-        augeas{'sysconfig/grafana-server':
-          context => "/files${$sysconfig_location}",
+        augeas { 'sysconfig/grafana-server':
+          context => "/files${sysconfig_location}",
           changes => $changes,
           notify  => Class['grafana::service'],
         }
@@ -77,10 +77,23 @@ class grafana::config {
   }
 
   if $grafana::ldap_cfg {
-    $ldap_cfg = $grafana::ldap_cfg
+    if $grafana::ldap_cfg =~ Array {
+      $ldap_cfg_ary = $grafana::ldap_cfg
+    } else {
+      $ldap_cfg_ary = [$grafana::ldap_cfg]
+    }
+
+    $template_body = [
+      "<% scope['ldap_cfg_ary'].each do |v| %>",
+      "<%= require 'toml'; TOML::Generator.new(v).body %>\n",
+      '<% end %>',
+    ]
+
+    $ldap_cfg_toml = inline_template($template_body.join(''))
+
     file { '/etc/grafana/ldap.toml':
       ensure  => file,
-      content => inline_template("<%= require 'toml'; TOML::Generator.new(@ldap_cfg).body %>\n"),
+      content => $ldap_cfg_toml,
       owner   => 'grafana',
       group   => 'grafana',
       notify  => Class['grafana::service'],
@@ -119,14 +132,17 @@ class grafana::config {
             }
           }
 
-          file { $options['path'] :
-            ensure  => directory,
-            owner   => 'grafana',
-            group   => 'grafana',
-            mode    => '0750',
-            recurse => true,
-            purge   => true,
-            source  => $options['puppetsource'],
+          if $options['puppetsource'] {
+            file { $options['path'] :
+              ensure       => directory,
+              owner        => 'grafana',
+              group        => 'grafana',
+              mode         => '0750',
+              recurse      => true,
+              purge        => true,
+              source       => $options['puppetsource'],
+              sourceselect => 'all',
+            }
           }
         }
       }
@@ -146,6 +162,5 @@ class grafana::config {
         notify  => Class['grafana::service'],
       }
     }
-
   }
 }

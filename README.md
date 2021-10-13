@@ -1,11 +1,13 @@
 # grafana
 
-[![Build Status](https://travis-ci.org/voxpupuli/puppet-grafana.png?branch=master)](https://travis-ci.org/voxpupuli/puppet-grafana)
-[![Code Coverage](https://coveralls.io/repos/github/voxpupuli/puppet-grafana/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppet-grafana)
+[![Build Status](https://github.com/voxpupuli/puppet-grafana/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-grafana/actions?query=workflow%3ACI)
+[![Release](https://github.com/voxpupuli/puppet-grafana/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/puppet-grafana/actions/workflows/release.yml)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
 [![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
 [![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
+[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-grafana)
+[![Apache-2 License](https://img.shields.io/github/license/voxpupuli/puppet-grafana.svg)](LICENSE)
 
 #### Table of Contents
 
@@ -28,9 +30,8 @@ InfluxDB and OpenTSDB.
 
 ## Module Description
 
-Version 2.x of this module is designed to work with version 2.x of Grafana.
-If you would like to continue to use Grafana 1.x, please use version 1.x of
-this module.
+With the 9.0.0 release of this module we only support Grafana 6.x/7.x/8.x.
+Version 8 of the module was tested successfully on Grafana 6 and 7.
 
 ## Setup
 
@@ -228,6 +229,113 @@ ldap_cfg => {
 },
 ```
 
+If you want to connect to multiple LDAP servers using different configurations,
+use an array to enwrap the configurations as shown below.
+
+```
+ldap_cfg => [
+  {
+    servers => [
+      {
+        host            => 'ldapserver1.domain1.com',
+        port            => 636+0,
+        use_ssl         => true,
+        search_filter   => '(sAMAccountName=%s)',
+        search_base_dns => [ 'dc=domain1,dc=com' ],
+        bind_dn         => 'user@domain1.com',
+        bind_password   => 'passwordhere',
+      },
+    ],
+    'servers.attributes' => {
+      name      => 'givenName',
+      surname   => 'sn',
+      username  => 'sAMAccountName',
+      member_of => 'memberOf',
+      email     => 'email',
+    },
+    'servers.group_mappings' => [
+      {
+        group_dn => cn=grafana_viewers,ou=groups,dc=domain1,dc=com
+        org_role: Viewer
+      }
+    ],
+  },
+  {
+    servers => [
+      {
+        host            => 'ldapserver2.domain2.com',
+        port            => 389+0,
+        use_ssl         => false,
+        start_tls       => true,
+        search_filter   => '(uid=%s)',
+        search_base_dns => [ 'dc=domain2,dc=com' ],
+        bind_dn         => 'user@domain2.com',
+        bind_password   => 'passwordhere',
+      },
+    ],
+    'servers.attributes' => {
+      name      => 'givenName',
+      surname   => 'sn',
+      username  => 'uid',
+      member_of => 'memberOf',
+      email     => 'mail',
+    }
+    'servers.group_mappings' => [
+      {
+        'group_dn'      => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
+        'org_role'      => 'Admin',
+        'grafana_admin' => true,
+      }
+    ],
+  },
+]
+
+
+#####
+# or in hiera-yaml style
+grafana::ldap_cfg:
+  - servers:
+      - host: ldapserver1.domain1.com
+        port: 636
+        use_ssl: true
+        search_filter: '(sAMAccountName=%s)'
+        search_base_dns: ['dc=domain1,dc=com']
+        bind_dn: 'user@domain1.com'
+        bind_password: 'passwordhere'
+    servers.attributes:
+      name: givenName
+      surname: sn
+      username: sAMAccountName
+      member_of: memberOf
+      email: email
+    servers.group_mappings:
+      - group_dn: cn=grafana_viewers,ou=groups,dc=domain1,dc=com
+        org_role: Viewer
+
+  - servers:
+      - host: ldapserver2.domain2.com
+        port: 389
+        use_ssl: false
+        start_tls: true
+        search_filter: '(uid=%s)',
+        search_base_dns: ['dc=domain2,dc=com']
+        bind_dn: 'user@domain2.com'
+        bind_password: 'passwordhere'
+    servers.attributes:
+      name: givenName
+      surname: sn
+      username: uid
+      member_of: memberOf
+      email: mail
+    servers.group_mappings:
+      - group_dn: cn=grafana_admins,ou=groups,dc=domain2,dc=com
+        org_role: Admin
+        grafana_admin: true
+
+
+#####
+```
+
 ##### `container_cfg`
 
 Boolean to control whether a configuration file should be generated when using
@@ -405,6 +513,9 @@ If you are using a sub-path for the Grafana API, you will need to set the `grafa
 - `grafana_organization`
 - `grafana_user`
 - `grafana_folder`
+- `grafana_team`
+- `grafana_membership`
+- `grafana_dashboard_permission`
 
 For instance, if your sub-path is `/grafana`, the `grafana_api_path` must
 be set to `/grafana/api`. Do not add a trailing `/` (slash) at the end of the value.
@@ -432,6 +543,119 @@ grafana_organization { 'example_org':
 `name` is optional if the name will differ from example_org above.
 
 `address` is an optional parameter that requires a hash. Address settings are `{"address1":"","address2":"","city":"","zipCode":"","state":"","country":""}`
+
+#### `grafana_team`
+
+In order to use the team resource, add the following to your manifest:
+
+```puppet
+grafana_team { 'example_team':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  home_dashboard   => 'example_dashboard',
+  organization     => 'example_org',
+}
+```
+
+Organziation must exist if specified.
+
+`grafana_url`, `grafana_user`, and `grafana_password` are required to create teams via the API.
+
+`ensure` is required. If the resource should be `present` or `absent`
+
+`name` is optional if the name will differ from example_team above.
+
+`home_dashboard_folder` is optional. Sets the folder where home dashboard resides. Dashboard folder must exist.
+
+`home_dashboard` is optional. Sets the home dashboard for team. Dashboard must exist.
+
+`organization` is optional. Defaults to `Main org.`
+
+#### `grafana_dashboard_permission`
+
+In order to use the dashboard permission resource, add one the following to your manifest:
+
+add permissions for user:
+
+```puppet
+grafana_dashboard_permission { 'example_user_permission':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  dashboard        => 'example_dashboard',
+  user             => 'example_user',
+  organization     => 'example_org',
+}
+```
+
+add permissions for team:
+
+```puppet
+grafana_dashboard_permission { 'example_team_permission':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  dashboard        => 'example_dashboard',
+  team             => 'example_team',
+  organization     => 'example_org',
+}
+```
+
+Organziation, team, user and dashboard must exist if specified.
+
+`grafana_url`, `grafana_user`, and `grafana_password` are required to create teams via the API.
+
+`ensure` is required. If the resource should be `present` or `absent`
+
+`dashboard` is required. The dashboard to set permissions for.
+
+`user` is required if `team` not set. The user to add permissions for.
+
+`team` is required if `user` not set. the team to add permissions for.
+
+`name` is optional if the name will differ from example_team above.
+
+`organization` is optional. Defaults to `Main org.`
+
+#### `grafana_membership`
+
+In order to use the membership resource, add the following to your manifest:
+
+```puppet
+grafana_membership { 'example_membership':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  membership_type  => 'team',
+  organization     => 'example_org',
+  target_name      => 'example_team',
+  user_name        => 'example_user',
+  role             => 'Viewer'
+  }
+}
+```
+A membership is the concept of a user belonging to a target - either a `team` or an `organization`
+
+The user and target must both exist for a membership to be created
+
+`grafana_url`, `grafana_user`, and `grafana_password` are required to create memberships via the API.
+
+`ensure` is required. If the resource should be `present` or `absent`
+
+`membership_type` is required. Either `team` or `organization`
+
+`target_name` is required. Specifies the target of the membership.
+
+`user_name` is required. Specifies the user that is the focus of the membership.
+
+`role` is required. Specifies what rights to grant the user. Either `Viewer`, `Editor` or `Admin`
+
+`organization` is optional when using the `membership_type` of `team`. Defaults to `Main org.`
 
 #### `grafana_dashboard`
 
@@ -639,7 +863,16 @@ It is possible to specify a custom plugin repository to install a plugin. This w
 ```puppet
 grafana_plugin { 'grafana-simple-json-datasource':
   ensure    => present,
-  repo => 'https://nexus.company.com/grafana/plugins',
+  repo      => 'https://nexus.company.com/grafana/plugins',
+}
+```
+
+It is also possible to specify a custom plugin url to install a plugin. This will use the --pluginUrl option for plugin installation with grafana_cli.
+
+```puppet
+grafana_plugin { 'grafana-example-custom-plugin':
+  ensure     => present,
+  plugin_url => 'https://github.com/example/example-custom-plugin/zipball/v1.0.0'
 }
 ```
 
@@ -938,9 +1171,9 @@ This task can be used to change the password for the admin user in grafana
 
 ## Limitations
 
-This module has been tested on Ubuntu 14.04, using each of the 'archive', 'docker'
-and 'package' installation methods. Other configurations should work with minimal,
-if any, additional effort.
+This module has been tested on every operating system in the metadata.json, using
+each of the 'archive', 'docker' and 'package' installation methods. Other
+configurations should work with minimal, if any, additional effort.
 
 ## Development
 
