@@ -95,5 +95,31 @@ supported_versions.each do |grafana_version|
         end
       end
     end
+
+    context 'grafana plugins' do
+      it 'installs' do
+        pp = <<-EOS
+        class { 'grafana':
+          version => 'latest',
+        }
+
+        package { 'grafana-image-renderer':
+          provider => 'grafana',
+        }
+        EOS
+        # Run it twice and test for idempotency
+        apply_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_changes: true)
+      end
+
+      describe package('grafana-image-renderer') do
+        it { is_expected.to be_installed }
+      end
+
+      describe service('grafana-server') do
+        it { is_expected.to be_enabled }
+        it { is_expected.to be_running }
+      end
+    end
   end
 end
