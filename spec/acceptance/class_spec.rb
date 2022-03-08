@@ -27,7 +27,8 @@ supported_versions.each do |grafana_version|
         it { is_expected.to be_installed }
       end
 
-      describe service('grafana-server') do
+      service_name = fact('os.family') == 'Archlinux' ? 'grafana' : 'grafana-server'
+      describe service(service_name) do
         it { is_expected.to be_enabled }
         it { is_expected.to be_running }
       end
