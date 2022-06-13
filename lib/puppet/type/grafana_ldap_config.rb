@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'toml'
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:grafana_ldap_config) do
+  confine feature: :toml
+
   @doc = 'Manage Grafana LDAP configuration'
   @toml_header = <<~EOF
     #
