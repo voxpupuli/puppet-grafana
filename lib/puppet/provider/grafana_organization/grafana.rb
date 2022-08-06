@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'erb'
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'grafana'))
 
@@ -10,7 +9,7 @@ Puppet::Type.type(:grafana_organization).provide(:grafana, parent: Puppet::Provi
 
   # https://grafana.com/docs/grafana/latest/http_api/org/#get-organization-by-name
   def get_org_by_name(org_name)
-    response = send_request('GET', format('%s/orgs/name/%s', resource[:grafana_api_path], ERB::Util.url_encode(org_name)))
+    response = send_request('GET', format('%s/orgs/name/%s', resource[:grafana_api_path], org_name))
 
     case response.code
     when '404'

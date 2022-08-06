@@ -2,7 +2,6 @@
 
 #    Copyright 2015 Mirantis, Inc.
 #
-require 'cgi'
 require 'json'
 require 'net/http'
 
@@ -26,19 +25,11 @@ class Puppet::Provider::Grafana < Puppet::Provider
   # Return a Net::HTTP::Response object
   def send_request(operation = 'GET', path = '', data = nil, search_path = {})
     request = nil
-    encoded_search = ''
 
-    if URI.respond_to?(:encode_www_form)
-      encoded_search = URI.encode_www_form(search_path)
-    else
-      # Ideally we would have use URI.encode_www_form but it isn't
-      # available with Ruby 1.8.x that ships with CentOS 6.5.
-      encoded_search = search_path.to_a.map do |x|
-        x.map { |y| CGI.escape(y.to_s) }.join('=')
-      end
-      encoded_search = encoded_search.join('&')
-    end
-    uri = URI.parse format('%s://%s:%d%s?%s', grafana_scheme, grafana_host, grafana_port, path, encoded_search)
+    encoded_path = path.split('/').map { |p| URI.encode_www_form_component(p) }.join('/')
+    encoded_search = URI.encode_www_form(search_path)
+
+    uri = URI.parse format('%s://%s:%d%s?%s', grafana_scheme, grafana_host, grafana_port, encoded_path, encoded_search)
 
     case operation.upcase
     when 'POST'

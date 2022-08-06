@@ -161,7 +161,7 @@ supported_versions.each do |grafana_version|
                 },
               }
 
-              grafana_organization { ['testorg1','testorg2','testorg3']:
+              grafana_organization { ['testorg1','testorg2','test org3']:
                 ensure           => present,
                 grafana_url      => 'http://localhost:3000',
                 grafana_user     => 'admin',
@@ -182,9 +182,9 @@ supported_versions.each do |grafana_version|
                 grafana_user     => 'admin',
                 grafana_password => 'admin',
                 organizations    => {
-                  'testorg1' => 'admin',
-                  'testorg2' => 'viewer',
-                  'testorg3' => 'Editor',
+                  'testorg1'   => 'admin',
+                  'testorg2'   => 'viewer',
+                  'test org3'  => 'Editor',
                 },
               }
               PUPPET
@@ -202,9 +202,9 @@ supported_versions.each do |grafana_version|
                 grafana_user     => 'admin',
                 grafana_password => 'admin',
                 organizations    => {
-                  'testorg1' => 'viewer',
-                  'testorg2' => 'editor',
-                  'testorg3' => 'admin',
+                  'testorg1'   => 'viewer',
+                  'testorg2'   => 'editor',
+                  'test org3'  => 'admin',
                 },
               }
               PUPPET
