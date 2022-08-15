@@ -66,6 +66,9 @@
       ]
     },
     {
+      "operatingsystem": "Archlinux"
+    },
+    {
       "operatingsystem": "FreeBSD",
       "operatingsystemrelease": [
         "12",
