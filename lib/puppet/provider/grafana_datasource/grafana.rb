@@ -63,6 +63,12 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
 
         datasource = JSON.parse(response.body)
 
+        basic_auth_password = if datasource.key?('secureJsonData') && datasource['secureJsonData'].key?('basicAuthPassword')
+                                datasource['secureJsonData']['basicAuthPassword']
+                              else
+                                datasource.fetch('basicAuthPassword', '')
+                              end
+
         {
           id: datasource['id'],
           name: datasource['name'],
@@ -76,7 +82,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
           with_credentials: datasource['withCredentials'] ? :true : :false,
           basic_auth: datasource['basicAuth'] ? :true : :false,
           basic_auth_user: datasource['basicAuthUser'],
-          basic_auth_password: datasource['basicAuthPassword'],
+          basic_auth_password: basic_auth_password,
           json_data: datasource['jsonData'],
           secure_json_data: datasource['secureJsonData']
         }
@@ -217,6 +223,14 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
     response = send_request 'POST', format('%s/user/using/%s', resource[:grafana_api_path], fetch_organization[:id])
     raise format('Failed to switch to org %s (HTTP response: %s/%s)', fetch_organization[:id], response.code, response.body) unless response.code == '200'
 
+    secure_json_data = if resource[:secure_json_data]
+                         resource[:secure_json_data].clone
+                       else
+                         {}
+                       end
+
+    secure_json_data[:basicAuthPassword] = resource[:basic_auth_password] if !secure_json_data.key?('basicAuthPassword') && resource[:basic_auth_password]
+
     data = {
       name: resource[:name],
       type: resource[:type],
@@ -228,10 +242,11 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
       isDefault: (resource[:is_default] == :true),
       basicAuth: (resource[:basic_auth] == :true),
       basicAuthUser: resource[:basic_auth_user],
+      # Deprecated field, use only secureJsonData later
       basicAuthPassword: resource[:basic_auth_password],
       withCredentials: (resource[:with_credentials] == :true),
       jsonData: resource[:json_data],
-      secureJsonData: resource[:secure_json_data]
+      secureJsonData: secure_json_data
     }
 
     if datasource.nil?
