@@ -69,6 +69,31 @@ supported_versions.each do |grafana_version|
           end
         end
       end
+
+      context 'with basic auth in secure_json_data' do
+        it_behaves_like 'an idempotent resource' do
+          let(:manifest) do
+            <<-PUPPET
+            grafana_datasource { 'prometheus3':
+              grafana_url          => 'http://localhost:3000',
+              grafana_user         => 'admin',
+              grafana_password     => 'admin',
+              type                 => 'prometheus',
+              url                  => 'https://prom3.example.com',
+              access_mode          => 'proxy',
+              json_data            => {
+                'httpMethod'       => 'POST',
+                'timeInterval'     => '10s',
+              },
+              basic_auth_user      => 'prom_user',
+              secure_json_data     => {
+                'basicAuthPassword' => 'prom_password',
+              },
+            }
+            PUPPET
+          end
+        end
+      end
     end
 
     describe 'influxdb ds', pending: true do

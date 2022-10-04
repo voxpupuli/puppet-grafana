@@ -62,6 +62,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
         raise format('Failed to retrieve datasource %d (HTTP response: %s/%s)', id, response.code, response.body) if response.code != '200'
 
         datasource = JSON.parse(response.body)
+        Puppet.warning(datasource)
 
         basic_auth_password = if datasource.key?('secureJsonFields') && datasource['secureJsonFields'].key?('basicAuthPassword')
                                 datasource['secureJsonFields']['basicAuthPassword']
