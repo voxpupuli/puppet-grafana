@@ -19,6 +19,10 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
     resource[:grafana_api_path]
   end
 
+  def grafana_api_path
+    resource[:uid]
+  end
+
   def fetch_organizations
     response = send_request('GET', format('%s/orgs', resource[:grafana_api_path]))
     raise format('Fail to retrieve organizations (HTTP response: %s/%s)', response.code, response.body) if response.code != '200'
@@ -66,6 +70,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
         {
           id: datasource['id'],
           name: datasource['name'],
+          uid: datasource['uid'],
           url: datasource['url'],
           type: datasource['type'],
           user: datasource['user'],
@@ -219,6 +224,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
 
     data = {
       name: resource[:name],
+      uid: resource[:uid],
       type: resource[:type],
       url: resource[:url],
       access: resource[:access_mode],

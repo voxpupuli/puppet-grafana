@@ -11,6 +11,11 @@ Puppet::Type.newtype(:grafana_datasource) do
     desc 'The name of the datasource.'
   end
 
+  newparam(:uid) do
+    desc 'The uid of the datasource.'
+    defaultto: :name
+  end
+
   newparam(:grafana_api_path) do
     desc 'The absolute path to the API endpoint'
     defaultto '/api'
