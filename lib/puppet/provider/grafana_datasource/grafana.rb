@@ -63,8 +63,8 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
 
         datasource = JSON.parse(response.body)
 
-        basic_auth_password = if datasource.key?('secureJsonData') && datasource['secureJsonData'].key?('basicAuthPassword')
-                                datasource['secureJsonData']['basicAuthPassword']
+        basic_auth_password = if datasource.key?('secureJsonFields') && datasource['secureJsonFields'].key?('basicAuthPassword')
+                                datasource['secureJsonFields']['basicAuthPassword']
                               else
                                 datasource.fetch('basicAuthPassword', '')
                               end
