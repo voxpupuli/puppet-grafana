@@ -13,7 +13,6 @@ Puppet::Type.newtype(:grafana_datasource) do
 
   newparam(:uid) do
     desc 'The uid of the datasource.'
-    defaultto :name
   end
 
   newparam(:grafana_api_path) do
