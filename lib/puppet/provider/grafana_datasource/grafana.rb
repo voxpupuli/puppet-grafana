@@ -19,7 +19,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
     resource[:grafana_api_path]
   end
 
-  def grafana_api_path
+  def uid
     resource[:uid]
   end
 
