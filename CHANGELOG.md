@@ -4,7 +4,23 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v11.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v11.1.0) (2022-11-01)
+## [v11.1.1](https://github.com/voxpupuli/puppet-grafana/tree/v11.1.1) (2023-03-22)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v11.1.0...v11.1.1)
+
+**Fixed bugs:**
+
+- Fix default PGP key [\#308](https://github.com/voxpupuli/puppet-grafana/pull/308) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- repository setup: new GPG repository keys [\#307](https://github.com/voxpupuli/puppet-grafana/issues/307)
+
+**Merged pull requests:**
+
+- Move static default settings from Hiera to Puppet [\#309](https://github.com/voxpupuli/puppet-grafana/pull/309) ([smortex](https://github.com/smortex))
+
+## [v11.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v11.1.0) (2022-11-02)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v11.0.0...v11.1.0)
 
