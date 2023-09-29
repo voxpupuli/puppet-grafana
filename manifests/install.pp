@@ -181,6 +181,9 @@ class grafana::install {
           ensure => present,
           home   => $grafana::install_dir,
         }
+        group { 'grafana':
+          ensure => present,
+        }
       }
 
       file { $grafana::install_dir:
