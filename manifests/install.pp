@@ -190,6 +190,12 @@ class grafana::install {
         require => User['grafana'],
       }
 
+      file { $grafana::config_dir:
+        ensure  => directory,
+        group   => 'root',
+        owner   => 'root',
+      }
+
       archive { '/tmp/grafana.tar.gz':
         ensure          => present,
         extract         => true,
