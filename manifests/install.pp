@@ -193,7 +193,7 @@ class grafana::install {
         require => User['grafana'],
       }
 
-      file { $grafana::config_dir:
+      file { [$grafana::config_dir, "${grafana::config_dir}/provisioning", "${grafana::config_dir}/provisioning/datasources", "${grafana::config_dir}/provisioning/dashboards"]:
         ensure  => directory,
         group   => 'root',
         owner   => 'root',
