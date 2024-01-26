@@ -17,7 +17,7 @@ group :development do
 end
 
 group :system_tests do
-  gem 'voxpupuli-acceptance', '~> 3.0',  :require => false
+  gem 'voxpupuli-acceptance', '~> 2.0',  :require => false
 end
 
 group :release do
