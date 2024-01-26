@@ -22,6 +22,8 @@ end
 
 group :release do
   gem 'voxpupuli-release', '~> 3.0',  :require => false
+  gem 'github_changelog_generator', '>=1.16.1', :require => false
+  gem 'faraday-retry', '~> 2.1', :require => false
 end
 
 gem 'rake', :require => false
