@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v13.2.0](https://github.com/voxpupuli/puppet-grafana/tree/v13.2.0) (2024-05-24)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.1.0...v13.2.0)
+
+**Implemented enhancements:**
+
+- Support Grafana 10.x [\#348](https://github.com/voxpupuli/puppet-grafana/pull/348) ([treydock](https://github.com/treydock))
+
+**Fixed bugs:**
+
+- Remove legacy top-scope syntax [\#344](https://github.com/voxpupuli/puppet-grafana/pull/344) ([smortex](https://github.com/smortex))
+
 ## [v13.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v13.1.0) (2023-10-31)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.0.1...v13.1.0)
