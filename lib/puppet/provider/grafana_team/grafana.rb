@@ -99,11 +99,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
       theme: resource[:theme],
       timezone: resource[:timezone]
     }
-    if major_version >= 10
-      request_data[:homeDashboardUID] = dash[:uid]
-    else
-      request_data[:homeDashboardId] = dash[:id]
-    end
+    request_data[:homeDashboardUID] = dash[:uid]
     ['PUT', endpoint, request_data]
   end
 
@@ -157,11 +153,6 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     response = send_request('GET', format('%s/health', resource[:grafana_api_path]))
     data = parse_response(response.body)
     @version = data['version']
-  end
-
-  def major_version
-    version unless @version
-    @version.split('.').first.to_i
   end
 
   def setup_search_path(ident, folder_id = nil, search = false)
