@@ -82,6 +82,7 @@ The following parameters are available in the `grafana` class:
 * [`repo_release`](#-grafana--repo_release)
 * [`repo_url`](#-grafana--repo_url)
 * [`plugins`](#-grafana--plugins)
+* [`provisioning_dir`](#-grafana--provisioning_dir)
 * [`provisioning_dashboards`](#-grafana--provisioning_dashboards)
 * [`provisioning_datasources`](#-grafana--provisioning_datasources)
 * [`provisioning_dashboards_file`](#-grafana--provisioning_dashboards_file)
@@ -251,6 +252,14 @@ Plugins to be passed to `create_resources`, wraps around the
 
 Default value: `{}`
 
+##### <a name="-grafana--provisioning_dir"></a>`provisioning_dir`
+
+Data type: `Stdlib::Absolutepath`
+
+Path to the grafana provisioning dir e.g /etc/grafana/provisioning
+
+Default value: `'/etc/grafana/provisioning'`
+
 ##### <a name="-grafana--provisioning_dashboards"></a>`provisioning_dashboards`
 
 Data type: `Hash`
@@ -273,21 +282,21 @@ Default value: `{}`
 
 ##### <a name="-grafana--provisioning_dashboards_file"></a>`provisioning_dashboards_file`
 
-Data type: `String`
+Data type: `Stdlib::Absolutepath`
 
 Fully qualified path to place the provisioning file
 for dashboards, only used if provisioning_dashboards is specified.
 
-Default value: `'/etc/grafana/provisioning/dashboards/puppetprovisioned.yaml'`
+Default value: `"${provisioning_dir}/dashboards/puppetprovisioned.yaml"`
 
 ##### <a name="-grafana--provisioning_datasources_file"></a>`provisioning_datasources_file`
 
-Data type: `String`
+Data type: `Stdlib::Absolutepath`
 
 Fully qualified path to place the provisioning file
 for datasources, only used if provisioning_datasources is specified.
 
-Default value: `'/etc/grafana/provisioning/datasources/puppetprovisioned.yaml'`
+Default value: `"${provisioning_dir}/datasources/puppetprovisioned.yaml"`
 
 ##### <a name="-grafana--create_subdirs_provisioning"></a>`create_subdirs_provisioning`
 

@@ -118,6 +118,51 @@ supported_versions.each do |grafana_version|
         apply_manifest(pp, catch_changes: true)
       end
     end
+
+    context 'with fancy dashboard config and custom target file and create_subdirs_provisioning' do
+      it 'works idempotently with no errors' do
+        pp = <<-EOS
+        class { 'grafana':
+          version => "#{grafana_version}",
+          create_subdirs_provisioning => true,
+          provisioning_datasources      => {
+            apiVersion  => 1,
+            datasources => [
+              {
+              name      => 'Prometheus',
+              type      => 'prometheus',
+              access    => 'proxy',
+              url       => 'http://localhost:9090/prometheus',
+              isDefault => false,
+              },
+            ],
+          },
+          provisioning_dashboards       => {
+            apiVersion => 1,
+            providers  => [
+              {
+                name            => 'default',
+                orgId           => 1,
+                folder         => '',
+                type            => 'file',
+                disableDeletion => true,
+                options         => {
+                  path          => '/var/lib/grafana/dashboards',
+                  puppetsource  => 'puppet:///modules/my_custom_module/dashboards',
+                },
+              },
+            ],
+          },
+          provisioning_dashboards_file  => '/etc/grafana/provisioning/dashboards/dashboard.yaml',
+          provisioning_datasources_file => '/etc/grafana/provisioning/datasources/datasources.yaml'
+        }
+        EOS
+
+        # Run it twice and test for idempotency
+        apply_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_changes: true)
+      end
+    end
   end
 end
 

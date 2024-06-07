@@ -532,6 +532,42 @@ describe 'grafana' do
         end
       end
 
+      context 'provisioning_datasources defined' do
+        let(:params) do
+          {
+            version: '11.0.0',
+            provisioning_datasources: {
+              apiVersion: 1,
+              datasources: [
+                {
+                  name: 'Prometheus',
+                  type: 'prometheus',
+                  access: 'proxy',
+                  url: 'http://localhost:9090/',
+                  isDefault: true,
+                }
+              ]
+            }
+          }
+        end
+
+        it do
+          puppetprovisioned_datasources_path = case facts[:osfamily]
+                                               when 'FreeBSD'
+                                                 '/usr/local/etc/grafana/provisioning/datasources/puppetprovisioned.yaml'
+                                               else
+                                                 '/etc/grafana/provisioning/datasources/puppetprovisioned.yaml'
+                                               end
+
+          expect(subject).to contain_file(puppetprovisioned_datasources_path).with(
+            ensure: 'file',
+            owner: 'grafana',
+            group: 'grafana',
+            mode: '0640'
+          )
+        end
+      end
+
       context 'sysconfig environment variables' do
         let(:params) do
           {
