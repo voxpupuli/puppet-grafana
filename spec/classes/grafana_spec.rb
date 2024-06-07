@@ -21,7 +21,7 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'package',
-            version: '5.4.2'
+            version: '11.0.0'
           }
         end
 
@@ -32,7 +32,7 @@ describe 'grafana' do
           describe 'use archive to fetch the package to a temporary location' do
             it do
               expect(subject).to contain_archive('/tmp/grafana.deb').with_source(
-                'https://dl.grafana.com/oss/release/grafana_5.4.2_amd64.deb'
+                'https://dl.grafana.com/oss/release/grafana_11.0.0_amd64.deb'
               )
             end
 
@@ -158,13 +158,13 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'archive',
-            version: '5.4.2'
+            version: '11.0.0'
           }
         end
 
         install_dir    = '/usr/share/grafana'
         service_config = '/usr/share/grafana/conf/custom.ini'
-        archive_source = 'https://dl.grafana.com/oss/release/grafana-5.4.2.linux-amd64.tar.gz'
+        archive_source = 'https://dl.grafana.com/oss/release/grafana-11.0.0.linux-amd64.tar.gz'
 
         describe 'extract archive to install_dir' do
           it { is_expected.to contain_archive('/tmp/grafana.tar.gz').with_ensure('present') }
@@ -474,7 +474,7 @@ describe 'grafana' do
       context 'provisioning_dashboards defined' do
         let(:params) do
           {
-            version: '6.0.0',
+            version: '11.0.0',
             provisioning_dashboards: {
               apiVersion: 1,
               providers: [
@@ -509,7 +509,7 @@ describe 'grafana' do
         context 'without puppetsource defined' do
           let(:params) do
             {
-              version: '6.0.0',
+              version: '11.0.0',
               provisioning_dashboards: {
                 apiVersion: 1,
                 providers: [

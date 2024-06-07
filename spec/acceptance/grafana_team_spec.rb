@@ -48,12 +48,7 @@ supported_versions.each do |grafana_version|
       it 'has set default home dashboard' do
         shell('curl --user admin:admin http://localhost:3000/api/teams/1/preferences') do |f|
           data = JSON.parse(f.stdout)
-          # preferences are empty by default in Grafana 10
-          if grafana_version =~ %r{^(8|9)}
-            expect(data).to include('homeDashboardId' => 0)
-          else
-            expect(data).to be_empty
-          end
+          expect(data).to be_empty
         end
       end
     end
