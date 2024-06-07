@@ -506,10 +506,11 @@ describe 'grafana' do
           )
         end
 
-        context 'without puppetsource defined' do
+        context 'without puppetsource defined and create_subdirs_provisioning false' do
           let(:params) do
             {
               version: '11.0.0',
+              create_subdirs_provisioning: false,
               provisioning_dashboards: {
                 apiVersion: 1,
                 providers: [

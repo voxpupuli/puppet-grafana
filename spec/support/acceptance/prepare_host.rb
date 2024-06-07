@@ -2,7 +2,7 @@
 
 def prepare_host
   cleanup_script = <<-SHELL
-  /opt/puppetlabs/bin/puppet resource package grafana ensure=purged
+  puppet resource package grafana ensure=purged
   rm -rf /var/lib/grafana/
   SHELL
 

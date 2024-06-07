@@ -161,6 +161,9 @@ class grafana::install {
             ensure => 'present', # pacman provider doesn't have feature versionable
             name   => $grafana::package_name,
           }
+          file { ['/etc/grafana', '/etc/grafana/provisioning', '/etc/grafana/provisioning/dashboards', '/etc/grafana/provisioning/datasources',]:
+            ensure => 'directory',
+          }
         }
         'FreeBSD': {
           package { 'grafana':
