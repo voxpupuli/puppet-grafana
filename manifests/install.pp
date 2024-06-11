@@ -181,6 +181,9 @@ class grafana::install {
           ensure => present,
           home   => $grafana::install_dir,
         }
+        group { 'grafana':
+          ensure => present,
+        }
       }
 
       file { $grafana::install_dir:
@@ -188,6 +191,12 @@ class grafana::install {
         group   => 'grafana',
         owner   => 'grafana',
         require => User['grafana'],
+      }
+
+      file { [$grafana::config_dir, "${grafana::config_dir}/provisioning", "${grafana::config_dir}/provisioning/datasources", "${grafana::config_dir}/provisioning/dashboards"]:
+        ensure  => directory,
+        group   => 'root',
+        owner   => 'root',
       }
 
       archive { '/tmp/grafana.tar.gz':
