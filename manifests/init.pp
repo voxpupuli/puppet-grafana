@@ -68,6 +68,9 @@
 #   Plugins to be passed to `create_resources`, wraps around the
 #   `grafana_plugin` resource.
 #
+# @param provisioning_dir
+#   Path to the grafana provisioning dir e.g /etc/grafana/provisioning
+#
 # @param provisioning_dashboards
 #   Dashboards to provision into grafana. grafana > v5.0.0
 #   required. Will be converted into YAML and used by grafana to
@@ -167,8 +170,9 @@ class grafana (
   Hash $plugins = {},
   Hash $provisioning_dashboards = {},
   Hash $provisioning_datasources = {},
-  String $provisioning_dashboards_file = '/etc/grafana/provisioning/dashboards/puppetprovisioned.yaml',
-  String $provisioning_datasources_file = '/etc/grafana/provisioning/datasources/puppetprovisioned.yaml',
+  Stdlib::Absolutepath $provisioning_dir = '/etc/grafana/provisioning',
+  Stdlib::Absolutepath $provisioning_dashboards_file = "${provisioning_dir}/dashboards/puppetprovisioned.yaml",
+  Stdlib::Absolutepath $provisioning_datasources_file = "${provisioning_dir}/datasources/puppetprovisioned.yaml",
   Boolean $create_subdirs_provisioning = false,
   Optional[Hash] $sysconfig = undef,
   Hash[String[1], Hash] $ldap_servers = {},

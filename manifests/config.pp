@@ -161,6 +161,17 @@ class grafana::config {
     if (length($pdatasources) >= 1) {
       # template uses:
       #   - pdatasources
+
+      $datasources_provisioning_dir = "${grafana::provisioning_dir}/datasources"
+
+      file { $datasources_provisioning_dir:
+        ensure => directory,
+        owner  => 'grafana',
+        group  => 'grafana',
+        mode   => '0750',
+        before => File[$grafana::provisioning_datasources_file],
+      }
+
       file { $grafana::provisioning_datasources_file:
         ensure    => file,
         owner     => 'grafana',
