@@ -5,7 +5,6 @@ require 'facter'
 describe 'grafana_version' do
   before do
     Facter.clear
-    allow(Facter::Util::Resolution).to receive(:which).with('grafana-server').and_return('/usr/sbin/grafana-server')
   end
 
   context 'when VERSION file exists' do
