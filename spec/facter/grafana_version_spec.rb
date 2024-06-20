@@ -11,8 +11,10 @@ describe 'grafana_version' do
   context 'when VERSION file exists' do
     it 'returns the version from the VERSION file' do
       version = '1.2.3'
-      allow(File).to receive(:exist?).with('/usr/share/grafana/VERSION').and_return(true)
-      allow(File).to receive(:read).with('/usr/share/grafana/VERSION').and_return(version)
+      version_path = '/usr/share/grafana/VERSION'
+
+      allow(File).to receive(:exist?).with(version_path).and_return(true)
+      allow(File).to receive(:read).with(version_path).and_return(version)
 
       expect(Facter.fact(:grafana_version).value).to eq(version.strip)
     end
