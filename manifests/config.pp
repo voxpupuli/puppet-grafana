@@ -81,27 +81,19 @@ class grafana::config {
   }
 
   if $grafana::ldap_cfg {
+    # the additional \n after to_toml()` are not required. In the past the data was generated with the toml gem
+    # (not the toml-rb gem)
+    # That added the newline. To cause a tinier diff during the migration, we add it here as well.
     if $grafana::ldap_cfg =~ Sensitive {
       $ldap_cfg = $grafana::ldap_cfg.unwrap
+      $ldap_cfg_toml = Sensitive($ldap_cfg.flatten.map |$data| { "${stdlib::to_toml($data)}\n" })
     } else {
-      $ldap_cfg = $grafana::ldap_cfg
-    }
-
-    $template_body = [
-      "<% [scope['ldap_cfg']].flatten(1).each do |v| %>",
-      "<%= require 'toml'; TOML::Generator.new(v).body %>\n",
-      '<% end %>',
-    ]
-
-    if $grafana::ldap_cfg =~ Sensitive {
-      $ldap_cfg_toml = Sensitive(inline_template($template_body.join('')))
-    } else {
-      $ldap_cfg_toml = inline_template($template_body.join(''))
+      $ldap_cfg_toml = $grafana::ldap_cfg.flatten.map |$data| { "${stdlib::to_toml($data)}\n" }
     }
 
     file { '/etc/grafana/ldap.toml':
       ensure  => file,
-      content => $ldap_cfg_toml,
+      content => $ldap_cfg_toml.join("\n"),
       owner   => 'grafana',
       group   => 'grafana',
       notify  => Class['grafana::service'],
