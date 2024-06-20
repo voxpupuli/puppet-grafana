@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v14.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.1.0) (2024-06-20)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v14.0.0...v14.1.0)
+
+**Implemented enhancements:**
+
+- Add fact to get grafana version [\#367](https://github.com/voxpupuli/puppet-grafana/pull/367) ([rwaffen](https://github.com/rwaffen))
+
 ## [v14.0.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.0.0) (2024-06-14)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.2.0...v14.0.0)
