@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'facter'
 
 describe 'grafana_version' do
-  before(:each) do
+  before do
     Facter.clear
     allow(Facter::Util::Resolution).to receive(:which).with('grafana-server').and_return('/usr/sbin/grafana-server')
   end
@@ -23,5 +25,4 @@ describe 'grafana_version' do
       expect(Facter.fact(:grafana_version).value).to be_nil
     end
   end
-
 end
