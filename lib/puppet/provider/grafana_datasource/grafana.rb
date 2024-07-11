@@ -52,6 +52,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
   end
 
   def datasource_by_name
+    change_organization
     response = send_request('GET', format('%s/datasources/name/%s', resource[:grafana_api_path], ERB::Util.url_encode(resource[:name])))
     return nil if response.code == '404'
 
@@ -149,12 +150,15 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
     {}
   end
 
+  def change_organization
+    response = send_request 'POST', format('%s/user/using/%s', resource[:grafana_api_path], fetch_organization[:id])
+    raise format('Failed to switch to org %s (HTTP response: %s/%s)', fetch_organization[:id], response.code, response.body) unless response.code == '200'
+  end
+
   def flush
     return if resource['ensure'] == :absent
 
-    # change organizations
-    response = send_request 'POST', format('%s/user/using/%s', resource[:grafana_api_path], fetch_organization[:id])
-    raise format('Failed to switch to org %s (HTTP response: %s/%s)', fetch_organization[:id], response.code, response.body) unless response.code == '200'
+    change_organization
 
     # Build the `data` to POST/PUT by first creating a hash with some defaults which will be used if we're _creating_ a datasource
     data = {
@@ -252,6 +256,11 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
   end
 
   def exists?
-    datasource
+    # check organization first. If it does not exist, then
+    # the datasource does not exist either. Furthermore this
+    # avoids the issue that a noop run does not actually create
+    # the organization, so that datasource(_by_name) cannot
+    # invoke change_organization().
+    fetch_organization and datasource
   end
 end
