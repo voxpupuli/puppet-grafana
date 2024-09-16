@@ -7,3 +7,7 @@ Gemfile:
   enabled_lint_checks:
     - parameter_types
     - parameter_documentation
+
+.github/workflows/ci.yml:
+  with:
+    acceptance_runs_on: macarne
