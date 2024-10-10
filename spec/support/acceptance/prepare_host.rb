@@ -2,8 +2,9 @@
 
 def prepare_host
   cleanup_script = <<-SHELL
-  /opt/puppetlabs/bin/puppet resource package grafana ensure=purged
-  rm -rf /var/lib/grafana/
+  puppet resource package grafana ensure=purged
+  puppet resource service grafana-service ensure=stopped enable=false
+  rm -rf /var/lib/grafana /etc/grafana
   SHELL
 
   shell(cleanup_script)

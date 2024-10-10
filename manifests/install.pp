@@ -100,7 +100,7 @@ class grafana::install {
               architecture => 'amd64,arm64,armhf',
               repos        => 'main',
               key          => {
-                'id'     => $grafana::repo_key_id,
+                'name'   => 'grafana.asc',
                 'source' => $grafana::repo_gpg_key_url,
               },
               before       => Package['grafana'],

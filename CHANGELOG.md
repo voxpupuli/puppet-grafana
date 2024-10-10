@@ -4,6 +4,68 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v14.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.1.0) (2024-06-20)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v14.0.0...v14.1.0)
+
+**Implemented enhancements:**
+
+- Add fact to get grafana version [\#367](https://github.com/voxpupuli/puppet-grafana/pull/367) ([rwaffen](https://github.com/rwaffen))
+
+## [v14.0.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.0.0) (2024-06-14)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.2.0...v14.0.0)
+
+**Breaking changes:**
+
+- Drop support for EoL Grafana 8 & 9 [\#361](https://github.com/voxpupuli/puppet-grafana/pull/361) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL RedHat 7, CentOS 7 & 8 support [\#359](https://github.com/voxpupuli/puppet-grafana/pull/359) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL Ubuntu 18.04 support [\#358](https://github.com/voxpupuli/puppet-grafana/pull/358) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL Debian 10 support [\#357](https://github.com/voxpupuli/puppet-grafana/pull/357) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- Add Grafana 11 as supported version [\#355](https://github.com/voxpupuli/puppet-grafana/pull/355) ([sebastianrakel](https://github.com/sebastianrakel))
+- Add Debian 12 support [\#341](https://github.com/voxpupuli/puppet-grafana/pull/341) ([bastelfreak](https://github.com/bastelfreak))
+
+**Fixed bugs:**
+
+- Create subpaths for provisioning\_datasources [\#362](https://github.com/voxpupuli/puppet-grafana/pull/362) ([sebastianrakel](https://github.com/sebastianrakel))
+
+**Merged pull requests:**
+
+- CI: Enhance cleanup script [\#363](https://github.com/voxpupuli/puppet-grafana/pull/363) ([bastelfreak](https://github.com/bastelfreak))
+- CI: Run on latest grafana patch versions [\#360](https://github.com/voxpupuli/puppet-grafana/pull/360) ([bastelfreak](https://github.com/bastelfreak))
+- Use modern apt keyrings [\#351](https://github.com/voxpupuli/puppet-grafana/pull/351) ([saz](https://github.com/saz))
+
+## [v13.2.0](https://github.com/voxpupuli/puppet-grafana/tree/v13.2.0) (2024-05-24)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.1.0...v13.2.0)
+
+**Implemented enhancements:**
+
+- Support Grafana 10.x [\#348](https://github.com/voxpupuli/puppet-grafana/pull/348) ([treydock](https://github.com/treydock))
+
+**Fixed bugs:**
+
+- Remove legacy top-scope syntax [\#344](https://github.com/voxpupuli/puppet-grafana/pull/344) ([smortex](https://github.com/smortex))
+
+## [v13.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v13.1.0) (2023-10-31)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.0.1...v13.1.0)
+
+**Implemented enhancements:**
+
+- Add OracleLinux support [\#340](https://github.com/voxpupuli/puppet-grafana/pull/340) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v13.0.1](https://github.com/voxpupuli/puppet-grafana/tree/v13.0.1) (2023-09-15)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v13.0.0...v13.0.1)
+
+**Fixed bugs:**
+
+- Update Debian repo signing key [\#335](https://github.com/voxpupuli/puppet-grafana/pull/335) ([mouchymouchy](https://github.com/mouchymouchy))
+
 ## [v13.0.0](https://github.com/voxpupuli/puppet-grafana/tree/v13.0.0) (2023-06-22)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v12.0.0...v13.0.0)

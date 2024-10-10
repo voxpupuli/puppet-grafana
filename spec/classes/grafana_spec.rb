@@ -21,7 +21,7 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'package',
-            version: '5.4.2'
+            version: '11.0.0'
           }
         end
 
@@ -32,7 +32,7 @@ describe 'grafana' do
           describe 'use archive to fetch the package to a temporary location' do
             it do
               expect(subject).to contain_archive('/tmp/grafana.deb').with_source(
-                'https://dl.grafana.com/oss/release/grafana_5.4.2_amd64.deb'
+                'https://dl.grafana.com/oss/release/grafana_11.0.0_amd64.deb'
               )
             end
 
@@ -158,13 +158,13 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'archive',
-            version: '5.4.2'
+            version: '11.0.0'
           }
         end
 
         install_dir    = '/usr/share/grafana'
         service_config = '/usr/share/grafana/conf/custom.ini'
-        archive_source = 'https://dl.grafana.com/oss/release/grafana-5.4.2.linux-amd64.tar.gz'
+        archive_source = 'https://dl.grafana.com/oss/release/grafana-11.0.0.linux-amd64.tar.gz'
 
         describe 'extract archive to install_dir' do
           it { is_expected.to contain_archive('/tmp/grafana.tar.gz').with_ensure('present') }
@@ -279,28 +279,28 @@ describe 'grafana' do
             }
           end
 
-          expected = "# This file is managed by Puppet, any changes will be overwritten\n\n"\
-                     "app_mode = production\n\n"\
-                     "[section]\n"\
-                     "boolean = false\n"\
-                     "empty = \n"\
-                     "number = 8080\n"\
+          expected = "# This file is managed by Puppet, any changes will be overwritten\n\n" \
+                     "app_mode = production\n\n" \
+                     "[section]\n" \
+                     "boolean = false\n" \
+                     "empty = \n" \
+                     "number = 8080\n" \
                      "string = production\n"
 
           it { is_expected.to contain_file('grafana.ini').with_content(expected) }
 
-          ldap_expected = "\n[[servers]]\n"\
-                          "host = \"server1\"\n"\
-                          "search_base_dns = [\"dc=domain1,dc=com\"]\n"\
-                          "search_filter = \"(sAMAccountName=%s)\"\n"\
-                          "use_ssl = true\n"\
-                          "\n"\
-                          "[servers.attributes]\n"\
-                          "email = \"mail\"\n"\
-                          "member_of = \"memberOf\"\n"\
-                          "name = \"givenName\"\n"\
-                          "surname = \"sn\"\n"\
-                          "username = \"sAMAccountName\"\n"\
+          ldap_expected = "\n[[servers]]\n" \
+                          "host = \"server1\"\n" \
+                          "search_base_dns = [\"dc=domain1,dc=com\"]\n" \
+                          "search_filter = \"(sAMAccountName=%s)\"\n" \
+                          "use_ssl = true\n" \
+                          "\n" \
+                          "[servers.attributes]\n" \
+                          "email = \"mail\"\n" \
+                          "member_of = \"memberOf\"\n" \
+                          "name = \"givenName\"\n" \
+                          "surname = \"sn\"\n" \
+                          "username = \"sAMAccountName\"\n" \
                           "\n"
 
           it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_expected) }
@@ -381,31 +381,31 @@ describe 'grafana' do
             }
           end
 
-          ldap_expected = "\n[[servers]]\n"\
-                          "host = \"server1a server1b\"\n"\
-                          "search_base_dns = [\"dc=domain1,dc=com\"]\n"\
-                          "search_filter = \"(sAMAccountName=%s)\"\n"\
-                          "use_ssl = true\n"\
-                          "\n"\
-                          "[servers.attributes]\n"\
-                          "email = \"mail\"\n"\
-                          "member_of = \"memberOf\"\n"\
-                          "name = \"givenName\"\n"\
-                          "surname = \"sn\"\n"\
-                          "username = \"sAMAccountName\"\n"\
-                          "\n"\
-                          "\n[[servers]]\n"\
-                          "host = \"server2a server2b\"\n"\
-                          "search_base_dns = [\"dc=domain2,dc=com\"]\n"\
-                          "search_filter = \"(sAMAccountName=%s)\"\n"\
-                          "use_ssl = true\n"\
-                          "\n"\
-                          "[servers.attributes]\n"\
-                          "email = \"mail\"\n"\
-                          "member_of = \"memberOf\"\n"\
-                          "name = \"givenName\"\n"\
-                          "surname = \"sn\"\n"\
-                          "username = \"sAMAccountName\"\n"\
+          ldap_expected = "\n[[servers]]\n" \
+                          "host = \"server1a server1b\"\n" \
+                          "search_base_dns = [\"dc=domain1,dc=com\"]\n" \
+                          "search_filter = \"(sAMAccountName=%s)\"\n" \
+                          "use_ssl = true\n" \
+                          "\n" \
+                          "[servers.attributes]\n" \
+                          "email = \"mail\"\n" \
+                          "member_of = \"memberOf\"\n" \
+                          "name = \"givenName\"\n" \
+                          "surname = \"sn\"\n" \
+                          "username = \"sAMAccountName\"\n" \
+                          "\n" \
+                          "\n[[servers]]\n" \
+                          "host = \"server2a server2b\"\n" \
+                          "search_base_dns = [\"dc=domain2,dc=com\"]\n" \
+                          "search_filter = \"(sAMAccountName=%s)\"\n" \
+                          "use_ssl = true\n" \
+                          "\n" \
+                          "[servers.attributes]\n" \
+                          "email = \"mail\"\n" \
+                          "member_of = \"memberOf\"\n" \
+                          "name = \"givenName\"\n" \
+                          "surname = \"sn\"\n" \
+                          "username = \"sAMAccountName\"\n" \
                           "\n"
 
           it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_expected) }
@@ -474,7 +474,7 @@ describe 'grafana' do
       context 'provisioning_dashboards defined' do
         let(:params) do
           {
-            version: '6.0.0',
+            version: '11.0.0',
             provisioning_dashboards: {
               apiVersion: 1,
               providers: [
@@ -509,7 +509,7 @@ describe 'grafana' do
         context 'without puppetsource defined' do
           let(:params) do
             {
-              version: '6.0.0',
+              version: '11.0.0',
               provisioning_dashboards: {
                 apiVersion: 1,
                 providers: [
@@ -529,6 +529,42 @@ describe 'grafana' do
           end
 
           it { is_expected.not_to contain_file('/var/lib/grafana/dashboards') }
+        end
+      end
+
+      context 'provisioning_datasources defined' do
+        let(:params) do
+          {
+            version: '11.0.0',
+            provisioning_datasources: {
+              apiVersion: 1,
+              datasources: [
+                {
+                  name: 'Prometheus',
+                  type: 'prometheus',
+                  access: 'proxy',
+                  url: 'http://localhost:9090/',
+                  isDefault: true,
+                }
+              ]
+            }
+          }
+        end
+
+        it do
+          puppetprovisioned_datasources_path = case facts[:osfamily]
+                                               when 'FreeBSD'
+                                                 '/usr/local/etc/grafana/provisioning/datasources/puppetprovisioned.yaml'
+                                               else
+                                                 '/etc/grafana/provisioning/datasources/puppetprovisioned.yaml'
+                                               end
+
+          expect(subject).to contain_file(puppetprovisioned_datasources_path).with(
+            ensure: 'file',
+            owner: 'grafana',
+            group: 'grafana',
+            mode: '0640'
+          )
         end
       end
 

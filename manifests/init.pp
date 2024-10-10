@@ -68,6 +68,9 @@
 #   Plugins to be passed to `create_resources`, wraps around the
 #   `grafana_plugin` resource.
 #
+# @param provisioning_dir
+#   Path to the grafana provisioning dir e.g /etc/grafana/provisioning
+#
 # @param provisioning_dashboards
 #   Dashboards to provision into grafana. grafana > v5.0.0
 #   required. Will be converted into YAML and used by grafana to
@@ -137,7 +140,7 @@
 #   The whole grafana configuration
 #
 # @example Using the Class
-#  class { '::grafana':
+#  class { 'grafana':
 #    install_method  => 'docker',
 #  }
 #
@@ -160,15 +163,16 @@ class grafana (
   String $install_dir = '/usr/share/grafana',
   Optional[String] $package_source = undef,
   Enum['stable', 'beta', 'custom'] $repo_name = 'stable',
-  String[1] $repo_key_id = '0E22EB88E39E12277A7760AE9E439B102CF3C0C6',
+  String[1] $repo_key_id = 'B53AE77BADB630A683046005963FA27710458545',
   Optional[String[1]] $repo_release = undef,
   String $rpm_iteration = '1',
   String $version = 'installed',
   Hash $plugins = {},
   Hash $provisioning_dashboards = {},
   Hash $provisioning_datasources = {},
-  String $provisioning_dashboards_file = '/etc/grafana/provisioning/dashboards/puppetprovisioned.yaml',
-  String $provisioning_datasources_file = '/etc/grafana/provisioning/datasources/puppetprovisioned.yaml',
+  Stdlib::Absolutepath $provisioning_dir = '/etc/grafana/provisioning',
+  Stdlib::Absolutepath $provisioning_dashboards_file = "${provisioning_dir}/dashboards/puppetprovisioned.yaml",
+  Stdlib::Absolutepath $provisioning_datasources_file = "${provisioning_dir}/datasources/puppetprovisioned.yaml",
   Boolean $create_subdirs_provisioning = false,
   Optional[Hash] $sysconfig = undef,
   Hash[String[1], Hash] $ldap_servers = {},

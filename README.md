@@ -168,21 +168,19 @@ for more information.
 
 ##### TOML note
 
-This option **requires** the [toml](https://rubygems.org/gems/toml/) gem. Either
-install the gem using puppet's native gem provider,
-[puppetserver_gem](https://forge.puppetlabs.com/puppetlabs/puppetserver_gem),
-[pe_gem](https://forge.puppetlabs.com/puppetlabs/pe_gem),
-[pe_puppetserver_gem](https://forge.puppetlabs.com/puppetlabs/pe_puppetserver_gem),
-or manually using one of the following:
+This option **requires** the [toml](https://rubygems.org/gems/toml/) gem.
 
+```sh
+puppet resource package toml ensure=installed provider=puppetserver_gem
 ```
-  # apply or puppet-master
-  gem install toml
-  # PE apply
-  /opt/puppet/bin/gem install toml
-  # AIO or PE puppetserver
-  /opt/puppet/bin/puppetserver gem install toml
+
+This enables the puppetserver to compile a catalog.
+If you've the [generate types](https://www.puppet.com/docs/puppet/latest/environment_isolation.html) option enabled in r10k or code-manager, you also need to install the gem for the puppet-agent Ruby:
+
+```sh
+puppet resource package toml ensure=installed provider=puppet_gem
 ```
+
 ##### secrets
 
 LDAP configuration usually contains secrets. If you want to stop these being leaked in logs and reports,
