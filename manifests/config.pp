@@ -182,5 +182,46 @@ class grafana::config {
         notify    => Class['grafana::service'],
       }
     }
+
+    # --alerts-- 
+    if ( $grafana::provisioning_alerting_source != undef ) {
+      file { $grafana::provisioning_alerting_dir:
+        ensure       => directory,
+        owner        => 'grafana',
+        group        => 'grafana',
+        mode         => '0640',
+        recurse      => true,
+        sourceselect => 'all',
+        purge        => true,
+        source       => $grafana::provisioning_alerting_source,
+        notify       => Class['grafana::service'],
+      }
+    }
+
+    # --contact_points--
+    $pcontact_points = $grafana::provisioning_contact_points
+    if (length($pcontact_points) >= 1) {
+      # template uses:
+      #   - pcontact_points
+      if (!defined(File[$grafana::provisioning_alerting_dir])) {
+        file { $grafana::provisioning_alerting_dir:
+          ensure => directory,
+          owner  => 'grafana',
+          group  => 'grafana',
+          mode   => '0750',
+        }
+      }
+
+      file { $grafana::provisioning_contact_points_file:
+        ensure    => file,
+        owner     => 'grafana',
+        group     => 'grafana',
+        mode      => '0640',
+        show_diff => false,
+        content   => epp('grafana/pcontact_points.yaml.epp'),
+        require   => File[$grafana::provisioning_alerting_dir],
+        notify    => Class['grafana::service'],
+      }
+    }
   }
 }

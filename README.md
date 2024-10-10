@@ -416,6 +416,28 @@ which is not part of grafana's syntax. This option will be extracted
 from the hash, and used to "source" a directory of dashboards. See
 **Advanced Usage** for details.
 
+#### `provisioning_alerting_source`
+
+A Source path to an alerting folder. This will be used to "source" a directory 
+of alerts. All YAML and JSON Files in this Folder 
+will be copied to the grafana provisioning directory (default: /etc/grafana/provisioning/alerting).
+See **Advanced Usage** for details.
+
+See [provisioning grafana alerting](https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting-resources/file-provisioning/) 
+for details and example config files.
+
+##### `provisioning_contact_points`
+
+A Hash which is converted to YAML for grafana to provision data
+sources. See [provisioning grafana alerting](https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting-resources/file-provisioning/ for
+details and example config file. Requires grafana > v5.0.0.
+
+This is very useful with Hiera as you can provide a yaml
+hash/dictionary which will effectively 'passthrough' to grafana. See
+**Advanced Usage** for examples.
+
+You also have the option to use **provisioning_alerting_source** to "source" it with the directory of alerts.
+
 #### `provisioning_dashboards_file`
 
 A String that is used as the target file name for the dashabords
@@ -429,6 +451,18 @@ A String that is used as the target file name for the datasources
 provisioning file. This way the module can be used to generate placeholder
 files so password can be sepecified in a different iteration, avoiding them
 to be put in the module code.
+
+#### `provisioning_contact_points_file`
+
+A String that is used as the target file name for the contact point
+provisioning file. This way the module can be used to generate placeholder
+files so password can be sepecified in a different iteration, avoiding them
+to be put in the module code.
+
+#### `provisioning_alerting_dir`
+
+A String to the alerting provisioning directory. This way the module can copy the 
+alerts and contact points into the right path.
 
 ##### `rpm_iteration`
 
@@ -1013,7 +1047,8 @@ provisioning](http://docs.grafana.org/administration/provisioning/).
 
 This module will provision grafana by placing yaml files into
 `/etc/grafana/provisioning/datasources` and
-`/etc/grafana/provisioning/dashboards` by default.
+`/etc/grafana/provisioning/dashboards`  and 
+`/etc/grafana/provisioning/alerting` by default.
 
 ##### Example datasource
 
@@ -1157,6 +1192,58 @@ Dashboards known to be "provisionable":
 Dashboards known not to be "provisionable":
 
 * [HTTP Services Status](https://grafana.com/dashboards/4859)
+
+#### Example Alert
+
+You need to set 
+`grafana::provisioning_alerting_source: puppet:///path/to/alerting` in puppet.
+This is the the path to "source" the alert YAMLs or JSONs.
+
+See [grafana import alert rules](https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting-resources/file-provisioning/#import-alert-rules) for examples of alert rule YAMLs.
+
+#### Example Contact point
+
+A puppet hash example for Prometheus. The module will place the hash
+as a yaml file into `/etc/gafana/provisioning/alerting/puppetprovisioned-contact-points.yaml`.
+
+```puppet
+class { 'grafana':
+  provisioning_contact_points => {
+    apiVersion      => 1,
+    contactPoints   => [
+      { 
+        orgId       => 1,
+        name        => 'cp_1'
+        receivers   => {
+            uid                     => 'first_uid',
+            type                    => 'prometheus-alertmanager',
+            disableResolveMessage   => false,
+            settings                => {
+                url => 'http://test:9000'
+            },
+        },
+      },
+    ],
+  }
+}
+```
+
+Here is the same configuration example as a hiera hash.
+
+```yaml
+grafana::provisioning_dashboards:
+    apiVersion: 1
+    contactPoints:
+        - orgId: 1
+        name: cp_1
+        receivers:
+        - uid: first_uid
+        type: prometheus-alertmanager
+        disableResolveMessage: false
+        settings:
+            url: http://test:9000
+```
+
 
 ## Tasks
 

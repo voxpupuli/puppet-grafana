@@ -81,6 +81,15 @@
 #   required. Will be converted into YAML and used by granfana to
 #   configure datasources.
 #
+# @param provisioning_contact_points
+#   Contact points to provision into grafana, grafana > v5.0.0
+#   required. Will be converted into YAML and used by granfana to
+#   configure contact_points.
+#
+# @param provisioning_alerting_source
+#   Alerts to provision into grafana, grafana > v5.0.0
+#   required. Source Path to alert YAMLs and JSONs to copy.
+#
 # @param provisioning_dashboards_file
 #   Fully qualified path to place the provisioning file
 #   for dashboards, only used if provisioning_dashboards is specified.
@@ -88,6 +97,14 @@
 # @param provisioning_datasources_file
 #   Fully qualified path to place the provisioning file
 #   for datasources, only used if provisioning_datasources is specified.
+#
+# @param provisioning_contact_points_file
+#   Fully qualified path to place the provisioning file
+#   for contact points, only used if provisioning_contact_points is specified.
+#
+# @param provisioning_alerting_dir
+#   Fully qualified path to place the provisioning file
+#   for alerts, only used if provisioning_alerting is specified.
 #
 # @param create_subdirs_provisioning
 #   If true puppet will create any
@@ -170,9 +187,13 @@ class grafana (
   Hash $plugins = {},
   Hash $provisioning_dashboards = {},
   Hash $provisioning_datasources = {},
+  Hash $provisioning_contact_points = {},
+  Optional[Stdlib::Filesource] $provisioning_alerting_source = undef,
   Stdlib::Absolutepath $provisioning_dir = '/etc/grafana/provisioning',
   Stdlib::Absolutepath $provisioning_dashboards_file = "${provisioning_dir}/dashboards/puppetprovisioned.yaml",
   Stdlib::Absolutepath $provisioning_datasources_file = "${provisioning_dir}/datasources/puppetprovisioned.yaml",
+  Stdlib::Absolutepath $provisioning_alerting_dir = "${provisioning_dir}/alerting",
+  Stdlib::Absolutepath $provisioning_contact_points_file = "${provisioning_dir}/alerting/puppetprovisioned-contact-points.yaml",
   Boolean $create_subdirs_provisioning = false,
   Optional[Hash] $sysconfig = undef,
   Hash[String[1], Hash] $ldap_servers = {},
