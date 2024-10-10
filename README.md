@@ -429,7 +429,7 @@ for details and example config files.
 ##### `provisioning_contact_points`
 
 A Hash which is converted to YAML for grafana to provision data
-sources. See [provisioning grafana alerting](https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting-resources/file-provisioning/ for
+sources. See [provisioning grafana alerting](https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting-resources/file-provisioning/) for
 details and example config file. Requires grafana > v5.0.0.
 
 This is very useful with Hiera as you can provide a yaml
