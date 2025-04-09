@@ -41,6 +41,9 @@
 # @param service_name
 #   The name of the service managed with the 'archive' and 'package' install methods.
 #
+# @param service_ensure
+#   The ensure status of the service managed with the 'archive' and 'package' install methods.
+#
 # @param version
 #   The version of Grafana to install and manage.
 #
@@ -151,6 +154,7 @@ class grafana (
   String $package_name,
   Optional[Stdlib::HTTPUrl] $repo_url,
   String $service_name,
+  String $service_enable = 'running',
   Optional[String] $sysconfig_location,
   Optional[String] $archive_source = undef,
   Variant[Hash,Sensitive[Hash]] $cfg = {},

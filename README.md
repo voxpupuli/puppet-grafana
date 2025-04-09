@@ -441,6 +441,11 @@ this in most cases.
 The name of the service managed with the 'archive' and 'package' install methods.
 Defaults to 'grafana-server'.
 
+##### `service_enable`
+
+The ensure status of the service managed with the 'archive' and 'package' install methods.
+Defaults to 'running'.
+
 ##### `version`
 
 The version of Grafana to install and manage. Defaults to 'installed'

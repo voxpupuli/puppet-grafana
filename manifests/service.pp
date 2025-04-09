@@ -17,7 +17,7 @@ class grafana::service {
     }
     'package','repo': {
       service { 'grafana':
-        ensure    => running,
+        ensure    => $grafana::service_enable,
         name      => $grafana::service_name,
         enable    => true,
         subscribe => Package['grafana'],
@@ -29,7 +29,7 @@ class grafana::service {
 
       if !defined(Service['grafana']) {
         service { 'grafana':
-          ensure     => running,
+          ensure     => $grafana::service_enable,
           name       => $grafana::service_name,
           provider   => base,
           binary     => "su - grafana -c '${service_path} -config=${service_config} -homepath=${grafana::install_dir} web &'",
