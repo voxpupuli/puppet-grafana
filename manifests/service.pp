@@ -16,11 +16,13 @@ class grafana::service {
       create_resources(docker::run, $container, $defaults)
     }
     'package','repo': {
-      service { 'grafana':
-        ensure    => running,
-        name      => $grafana::service_name,
-        enable    => true,
-        subscribe => Package['grafana'],
+      if !defined(Service['grafana']) {
+        service { 'grafana':
+          ensure    => running,
+          name      => $grafana::service_name,
+          enable    => true,
+          subscribe => Package['grafana'],
+        }
       }
     }
     'archive': {
