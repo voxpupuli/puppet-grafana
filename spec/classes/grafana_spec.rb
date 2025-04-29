@@ -25,7 +25,7 @@ describe 'grafana' do
           }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'Debian'
           download_location = '/tmp/grafana.deb'
 
@@ -90,7 +90,7 @@ describe 'grafana' do
           }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'Debian'
           describe 'install apt repo dependencies first' do
             it { is_expected.to contain_class('apt') }
@@ -130,7 +130,7 @@ describe 'grafana' do
           }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'Debian'
           describe 'install dependencies first' do
             it { is_expected.to contain_package('libfontconfig1').with_ensure('present').that_comes_before('Package[grafana]') }
@@ -177,7 +177,7 @@ describe 'grafana' do
           it { is_expected.to contain_user('grafana').that_comes_before('File[/usr/share/grafana]') }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'Archlinux', 'Debian', 'RedHat'
           describe 'create data_dir' do
             it { is_expected.to contain_file('/var/lib/grafana').with_ensure('directory') }
@@ -552,7 +552,7 @@ describe 'grafana' do
         end
 
         it do
-          puppetprovisioned_datasources_path = case facts[:osfamily]
+          puppetprovisioned_datasources_path = case facts[:os]['family']
                                                when 'FreeBSD'
                                                  '/usr/local/etc/grafana/provisioning/datasources/puppetprovisioned.yaml'
                                                else
@@ -576,7 +576,7 @@ describe 'grafana' do
           }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'Debian'
           describe 'Add the environment variable to the config file' do
             it { is_expected.to contain_augeas('sysconfig/grafana-server').with_context('/files/etc/default/grafana-server') }
