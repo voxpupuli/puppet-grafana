@@ -36,7 +36,7 @@ class grafana::install {
           }
 
           archive { '/tmp/grafana.deb':
-            source  => $real_package_source,
+            source => $real_package_source,
           }
 
           package { 'grafana':
