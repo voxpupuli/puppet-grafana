@@ -199,32 +199,33 @@ be enabled in the main configuration file. Enable it in cfg with:
 ```
 #### Example LDAP config
 
-```
+```puppet
 ldap_cfg => Sensitive({
   servers => [
-    { host            => 'ldapserver1.domain1.com',
+    {
+      host            => 'ldapserver1.domain1.com',
       port            => 636,
       use_ssl         => true,
       search_filter   => '(sAMAccountName=%s)',
       search_base_dns => [ 'dc=domain1,dc=com' ],
       bind_dn         => 'user@domain1.com',
       bind_password   => 'passwordhere',
+      attributes      => {
+        name      => 'givenName',
+        surname   => 'sn',
+        username  => 'sAMAccountName',
+        member_of => 'memberOf',
+        email     => 'mail',
+      },
     },
   ],
-  'servers.attributes' => {
-    name      => 'givenName',
-    surname   => 'sn',
-    username  => 'sAMAccountName',
-    member_of => 'memberOf',
-    email     => 'mail',
-  }
 }),
 ```
 
 If you want to connect to multiple LDAP servers using different configurations,
 use an array to enwrap the configurations as shown below.
 
-```
+```puppet
 ldap_cfg => Sensitive([
   {
     servers => [
@@ -236,20 +237,20 @@ ldap_cfg => Sensitive([
         search_base_dns => [ 'dc=domain1,dc=com' ],
         bind_dn         => 'user@domain1.com',
         bind_password   => 'passwordhere',
+        attributes      => {
+          name      => 'givenName',
+          surname   => 'sn',
+          username  => 'sAMAccountName',
+          member_of => 'memberOf',
+          email     => 'mail',
+        },
+        group_mappings  => [
+          {
+            group_dn => 'cn=grafana_viewers,ou=groups,dc=domain1,dc=com',
+            org_role => 'Viewer',
+          }
+        ],
       },
-    ],
-    'servers.attributes' => {
-      name      => 'givenName',
-      surname   => 'sn',
-      username  => 'sAMAccountName',
-      member_of => 'memberOf',
-      email     => 'mail',
-    },
-    'servers.group_mappings' => [
-      {
-        group_dn => 'cn=grafana_viewers,ou=groups,dc=domain1,dc=com',
-        org_role => 'Viewer',
-      }
     ],
   },
   {
@@ -263,28 +264,29 @@ ldap_cfg => Sensitive([
         search_base_dns => [ 'dc=domain2,dc=com' ],
         bind_dn         => 'user@domain2.com',
         bind_password   => 'passwordhere',
+        attributes      => {
+          name      => 'givenName',
+          surname   => 'sn',
+          username  => 'uid',
+          member_of => 'memberOf',
+          email     => 'mail',
+        }
+        group_mappings  => [
+          {
+            group_dn      => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
+            org_role      => 'Admin',
+            grafana_admin => true,
+          }
+        ],
       },
-    ],
-    'servers.attributes' => {
-      name      => 'givenName',
-      surname   => 'sn',
-      username  => 'uid',
-      member_of => 'memberOf',
-      email     => 'mail',
-    }
-    'servers.group_mappings' => [
-      {
-        'group_dn'      => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
-        'org_role'      => 'Admin',
-        'grafana_admin' => true,
-      }
     ],
   },
 ])
+```
 
+Same as above, but in Hiera
 
-#####
-# or in hiera-yaml style
+```yaml
 grafana::ldap_cfg:
   - servers:
       - host: ldapserver1.domain1.com
@@ -294,15 +296,15 @@ grafana::ldap_cfg:
         search_base_dns: ['dc=domain1,dc=com']
         bind_dn: 'user@domain1.com'
         bind_password: 'passwordhere'
-    servers.attributes:
-      name: givenName
-      surname: sn
-      username: sAMAccountName
-      member_of: memberOf
-      email: mail
-    servers.group_mappings:
-      - group_dn: cn=grafana_viewers,ou=groups,dc=domain1,dc=com
-        org_role: Viewer
+        attributes:
+          name: givenName
+          surname: sn
+          username: sAMAccountName
+          member_of: memberOf
+          email: mail
+        group_mappings:
+          - group_dn: cn=grafana_viewers,ou=groups,dc=domain1,dc=com
+            org_role: Viewer
 
   - servers:
       - host: ldapserver2.domain2.com
@@ -313,19 +315,16 @@ grafana::ldap_cfg:
         search_base_dns: ['dc=domain2,dc=com']
         bind_dn: 'user@domain2.com'
         bind_password: 'passwordhere'
-    servers.attributes:
-      name: givenName
-      surname: sn
-      username: uid
-      member_of: memberOf
-      email: mail
-    servers.group_mappings:
-      - group_dn: cn=grafana_admins,ou=groups,dc=domain2,dc=com
-        org_role: Admin
-        grafana_admin: true
-
-
-#####
+        attributes:
+          name: givenName
+          surname: sn
+          username: uid
+          member_of: memberOf
+          email: mail
+        group_mappings:
+          - group_dn: cn=grafana_admins,ou=groups,dc=domain2,dc=com
+            org_role: Admin
+            grafana_admin: true
 ```
 
 ##### `container_cfg`
