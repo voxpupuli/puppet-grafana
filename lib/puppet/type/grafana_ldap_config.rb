@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'toml'
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:grafana_ldap_config) do
@@ -156,6 +155,7 @@ Puppet::Type.newtype(:grafana_ldap_config) do
   end
 
   def eval_generate
+    require 'toml'
     ldap_servers = should_content
 
     if !ldap_servers.nil? && !ldap_servers.empty?
