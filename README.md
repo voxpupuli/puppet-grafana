@@ -829,7 +829,7 @@ Example:
 
 ##### **InfluxDB**
 
-N/A
+`httpMode` - Set to `GET` or `POST`
 
 ##### **MySQL**
 
@@ -837,7 +837,7 @@ N/A
 
 ##### **Prometheus**
 
-N/A
+`httpMode` - Set to `GET` or `POST`
 
 ##### `grafana_plugin`
 
