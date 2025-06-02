@@ -32,6 +32,9 @@
 # @param manage_package_repo
 #   If true this will setup the official grafana repositories on your host.
 #
+# @param manage_service
+#   If true this will setup the systemd service on your host and enable it.
+#
 # @param package_name
 #   The name of the package managed with the 'package' install method.
 #
@@ -148,6 +151,7 @@ class grafana (
   String $cfg_location,
   Enum['archive', 'docker', 'package', 'repo'] $install_method,
   Boolean $manage_package_repo,
+  Boolean $manage_service = true,
   String $package_name,
   Optional[Stdlib::HTTPUrl] $repo_url,
   String $service_name,
@@ -185,7 +189,9 @@ class grafana (
 ) {
   contain grafana::install
   contain grafana::config
-  contain grafana::service
+  if $manage_service {
+    contain grafana::service
+  }
 
   Class['grafana::install']
   -> Class['grafana::config']
