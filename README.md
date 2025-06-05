@@ -11,17 +11,20 @@
 
 #### Table of Contents
 
-1. [Overview](#overview)
-1. [Module Description](#module-description)
-1. [Setup](#setup)
-    * [Requirements](#requirements)
-    * [Beginning with Grafana](#beginning-with-grafana)
-1. [Usage](#usage)
-    * [Classes and Defined Types](#classes-and-defined-types)
-    * [Advanced usage](#advanced-usage)
-1. [Tasks](#tasks)
-1. [Limitations](#limitations)
-1. [Copyright and License](#copyright-and-license)
+- [Overview](#overview)
+- [Module Description](#module-description)
+- [Setup](#setup)
+  - [Requirements](#requirements)
+  - [Beginning with Grafana](#beginning-with-grafana)
+- [Usage](#usage)
+  - [Classes and Defined Types](#classes-and-defined-types)
+  - [Advanced usage](#advanced-usage)
+- [Tasks](#tasks)
+  - [`change_grafana_admin_password`](#change_grafana_admin_password)
+- [Limitations](#limitations)
+- [Development](#development)
+  - [Authors](#authors)
+- [Copyright and License](#copyright-and-license)
 
 ## Overview
 
@@ -163,7 +166,7 @@ Manages the Grafana LDAP configuration file. This hash is directly translated
 into the corresponding TOML file, allowing for full flexibility in generating
 the configuration.
 
-See the [LDAP documentation](http://docs.grafana.org/v2.1/installation/ldap/)
+See the [LDAP documentation](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/ldap/)
 for more information.
 
 ##### TOML note
@@ -174,11 +177,36 @@ This option **requires** the [toml](https://rubygems.org/gems/toml/) gem.
 puppet resource package toml ensure=installed provider=puppetserver_gem
 ```
 
+```puppet
+package { 'toml':
+  provider => puppetserver_gem,
+}
+```
+
 This enables the puppetserver to compile a catalog.
 If you've the [generate types](https://www.puppet.com/docs/puppet/latest/environment_isolation.html) option enabled in r10k or code-manager, you also need to install the gem for the puppet-agent Ruby:
 
 ```sh
 puppet resource package toml ensure=installed provider=puppet_gem
+```
+
+```puppet
+package { 'toml-puppetserver':
+  name     => 'toml',
+  provider => puppetserver_gem,
+}
+
+package { 'toml-puppet':
+  name     => 'toml',
+  provider => puppet_gem,
+}
+```
+
+After installing the gem(s), restart the Puppet Server and if using r10k or code-manager, re-deploy the environment(s).
+
+```sh
+systemctl restart puppetserver.service
+r10k deploy environment --generate-types
 ```
 
 ##### secrets
