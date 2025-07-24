@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v14.2.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.2.0) (2025-07-24)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v14.1.0...v14.2.0)
+
+**Implemented enhancements:**
+
+- puppet/archive: Allow 8.x [\#385](https://github.com/voxpupuli/puppet-grafana/pull/385) ([bastelfreak](https://github.com/bastelfreak))
+- metadata.json: Add OpenVox [\#377](https://github.com/voxpupuli/puppet-grafana/pull/377) ([jstraw](https://github.com/jstraw))
+
+**Merged pull requests:**
+
+- README.md: Clarify toml gem setup [\#374](https://github.com/voxpupuli/puppet-grafana/pull/374) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [v14.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.1.0) (2024-06-20)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v14.0.0...v14.1.0)
