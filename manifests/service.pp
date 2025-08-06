@@ -27,16 +27,14 @@ class grafana::service {
       $service_path   = "${grafana::install_dir}/bin/${grafana::service_name}"
       $service_config = "${grafana::install_dir}/conf/custom.ini"
 
-      if !defined(Service['grafana']) {
-        service { 'grafana':
-          ensure     => running,
-          name       => $grafana::service_name,
-          provider   => base,
-          binary     => "su - grafana -c '${service_path} -config=${service_config} -homepath=${grafana::install_dir} web &'",
-          hasrestart => false,
-          hasstatus  => false,
-          status     => "ps -ef | grep ${grafana::service_name} | grep -v grep",
-        }
+      service { 'grafana':
+        ensure     => running,
+        name       => $grafana::service_name,
+        provider   => base,
+        binary     => "su - grafana -c '${service_path} -config=${service_config} -homepath=${grafana::install_dir} web &'",
+        hasrestart => false,
+        hasstatus  => false,
+        status     => "ps -ef | grep ${grafana::service_name} | grep -v grep",
       }
     }
     default: {
