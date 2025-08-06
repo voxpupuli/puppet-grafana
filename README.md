@@ -896,6 +896,24 @@ grafana_plugin { 'grafana-example-custom-plugin':
 }
 ```
 
+If you need to enforce a specific version of an plugin you can use the package provider.
+
+```puppet
+package { 'grafana-image-renderer':
+  ensure => '2.0.0',
+  provider => 'grafana',
+}
+```
+
+The package provider also enables the possibility to use `latest` which will update plugins if there is a newer version.
+
+```puppet
+package { 'grafana-image-renderer':
+  ensure => 'latest',
+  provider => 'grafana',
+}
+```
+
 ##### `grafana_folder`
 
 Creates and manages Grafana folders via the API.
