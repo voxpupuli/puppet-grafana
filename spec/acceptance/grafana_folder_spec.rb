@@ -42,6 +42,7 @@ supported_versions.each do |grafana_version|
         grafana_folder { 'editor-folder':
           ensure           => present,
           uid              => 'editor-folder',
+          parent_uid       => 'example-folder',
           grafana_url      => 'http://localhost:3000',
           grafana_user     => 'admin',
           grafana_password => 'admin',
@@ -97,6 +98,7 @@ supported_versions.each do |grafana_version|
       grafana_folder { 'editor-folder':
         ensure           => present,
         uid              => 'editor-folder',
+        parent_uid       => 'example-folder',
         grafana_url      => 'http://localhost:3000',
         grafana_user     => 'admin',
         grafana_password => 'admin',
