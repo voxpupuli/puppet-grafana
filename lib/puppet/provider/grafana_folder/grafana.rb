@@ -119,6 +119,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
       grafana_folder = JSON.parse(response.body)
       if grafana_folder.key?('parentUid') && resource[:parent_uid] != grafana_folder.parentUid
         move_folder(folder)
+      end
 
       data = {
         folder: folder.merge('title' => resource[:title],
