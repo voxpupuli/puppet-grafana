@@ -15,7 +15,7 @@ Puppet::Type.newtype(:grafana_folder) do
     desc 'UID of the folder'
   end
 
-  newparam (:parent_uid) do
+  newparam(:parent_uid) do
     desc 'UID of the parent folder (optional)'
     defaultto ''
   end
