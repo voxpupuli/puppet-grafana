@@ -146,7 +146,6 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     return unless (response.code != '200')
 
     raise format('Failed to move folder %s (HTTP response: %s/%s)', resource[:title], response.code, response.body)
-    end
   end
 
   def save_permissions(value)
