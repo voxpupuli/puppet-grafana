@@ -117,9 +117,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
       save_permissions(resource[:permissions])
     else
       grafana_folder = JSON.parse(response.body)
-      if grafana_folder.key?('parentUid') && resource[:parent_uid] != grafana_folder.parentUid
-        move_folder(folder)
-      end
+      grafana_folder.key?('parentUid') && resource[:parent_uid] != grafana_folder.parentUid && move_folder(folder)
 
       data = {
         folder: folder.merge('title' => resource[:title],
