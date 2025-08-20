@@ -92,7 +92,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     folders unless @folders
 
     @folders.each do |folder|
-      @folder = folder if folder['title'] == resource[:title]
+      @folder = folder if folder['uid'] == resource[:uid]
     end
   end
 
@@ -105,7 +105,8 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     if @folder.nil?
       data = {
         title: resource[:title],
-        uid: resource[:uid]
+        uid: resource[:uid],
+        parentUid: resource[:parent_uid]
       }
 
       response = send_request('POST', format('%s/folders', resource[:grafana_api_path]), data)
@@ -115,6 +116,10 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
       find_folder
       save_permissions(resource[:permissions])
     else
+      grafana_folder = JSON.parse(response.body)
+      if grafana_folder.key?("parentUid") && resource[:parent_uid] != grafana_folder.parentUid
+        move_folder(folder)
+
       data = {
         folder: folder.merge('title' => resource[:title],
                              'uid' => @folder['uid']),
@@ -125,6 +130,21 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
       return unless (response.code != '200') && (response.code != '412')
 
       raise format('Failed to update folder %s (HTTP response: %s/%s)', resource[:title], response.code, response.body)
+    end
+  end
+
+  def move_folder(folder)
+    response = send_request 'POST', format('%s/user/using/%s', resource[:grafana_api_path], fetch_organization[:id])
+    raise format('Failed to switch to org %s (HTTP response: %s/%s)', fetch_organization[:id], response.code, response.body) unless response.code == '200'
+
+    data = {
+      parentUid: resource[:parent_uid]
+    }
+
+    response = send_request('POST', format('%s/folders/%s/move', resource[:grafana_api_path], @folder['uid']), data)
+    return unless (response.code != '200')
+
+    raise format('Failed to move folder %s (HTTP response: %s/%s)', resource[:title], response.code, response.body)
     end
   end
 
@@ -150,6 +170,10 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     save_folder(resource)
   end
 
+  def move
+    move_folder(resource)
+  end
+
   def destroy
     find_folder unless @folder
 
@@ -164,7 +188,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     folders unless @folders
 
     @folders.each do |folder|
-      return true if folder['title'] == resource[:title]
+      return true if folder['uid'] == resource[:uid]
     end
     false
   end

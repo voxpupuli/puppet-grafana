@@ -854,6 +854,10 @@ The title of the folder
 
 UID of the folder
 
+##### `parent_uid`
+
+UID of the parent folder, if any
+
 ### <a name="grafana_ldap_config"></a>`grafana_ldap_config`
 
 Manage Grafana LDAP configuration
