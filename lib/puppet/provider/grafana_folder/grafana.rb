@@ -132,7 +132,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     end
   end
 
-  def move_folder(folder)
+  def move_folder
     response = send_request 'POST', format('%s/user/using/%s', resource[:grafana_api_path], fetch_organization[:id])
     raise format('Failed to switch to org %s (HTTP response: %s/%s)', fetch_organization[:id], response.code, response.body) unless response.code == '200'
 
@@ -141,7 +141,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     }
 
     response = send_request('POST', format('%s/folders/%s/move', resource[:grafana_api_path], @folder['uid']), data)
-    return unless (response.code != '200')
+    return unless response.code != '200'
 
     raise format('Failed to move folder %s (HTTP response: %s/%s)', resource[:title], response.code, response.body)
   end
