@@ -157,18 +157,21 @@ supported_versions.each do |grafana_version|
         include grafana::validator
         grafana_folder { 'example-folder':
           ensure           => absent,
+          uid              => 'example-folder',
           grafana_url      => 'http://localhost:3000',
           grafana_user     => 'admin',
           grafana_password => 'admin',
         }
         grafana_folder { 'editor-folder':
           ensure           => absent,
+          uid              => 'editor-folder',
           grafana_url      => 'http://localhost:3000',
           grafana_user     => 'admin',
           grafana_password => 'admin',
         }
         grafana_folder { 'nomatch-folder':
           ensure           => absent,
+          uid              => 'nomatch-folder',
           grafana_url      => 'http://localhost:3000',
           grafana_user     => 'admin',
           grafana_password => 'admin',
