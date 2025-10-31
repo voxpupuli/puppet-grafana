@@ -811,6 +811,7 @@ The following parameters are available in the `grafana_folder` type.
 * [`grafana_url`](#-grafana_folder--grafana_url)
 * [`grafana_user`](#-grafana_folder--grafana_user)
 * [`organization`](#-grafana_folder--organization)
+* [`parent_uid`](#-grafana_folder--parent_uid)
 * [`provider`](#-grafana_folder--provider)
 * [`title`](#-grafana_folder--title)
 * [`uid`](#-grafana_folder--uid)
@@ -840,6 +841,12 @@ The username for the Grafana server (optional)
 The organization name to create the folder on
 
 Default value: `1`
+
+##### <a name="-grafana_folder--parent_uid"></a>`parent_uid`
+
+UID of the parent folder (optional)
+
+Default value: `''`
 
 ##### <a name="-grafana_folder--provider"></a>`provider`
 
