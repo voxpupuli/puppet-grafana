@@ -27,7 +27,7 @@ Puppet::Type.type(:grafana_plugin).provide(:grafana_cli) do
     all_plugins.each do |name|
       plugin = {
         ensure: :present,
-        name: name
+        name: name,
       }
       resources << new(plugin) if plugin[:name]
     end

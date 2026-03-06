@@ -8,7 +8,7 @@ Puppet::Type.type(:grafana_user).provide(:grafana, parent: Puppet::Provider::Gra
   desc 'Manages local Grafana users'
 
   def initialize(value = {})
-    super(value)
+    super
     @property_flush = {}
     @org_ids = {}
   end
@@ -30,7 +30,7 @@ Puppet::Type.type(:grafana_user).provide(:grafana, parent: Puppet::Provider::Gra
         theme: user['theme'],
         password: nil,
         is_admin: user['isGrafanaAdmin'] ? :true : :false,
-        organizations: user_orgs(user['id'])
+        organizations: user_orgs(user['id']),
       }
     else
       raise format('Failed to retrieve user %s (HTTP response: %s/%s)', username, response.code, response.body)
@@ -111,7 +111,6 @@ Puppet::Type.type(:grafana_user).provide(:grafana, parent: Puppet::Provider::Gra
     @property_flush[:password] = value
   end
 
-  # rubocop:disable Naming/PredicateName
   def is_admin
     user[:is_admin]
   end
@@ -119,7 +118,6 @@ Puppet::Type.type(:grafana_user).provide(:grafana, parent: Puppet::Provider::Gra
   def is_admin=(value)
     @property_flush[:is_admin] = value
   end
-  # rubocop:enable Naming/PredicateName
 
   def organizations
     user[:organizations]

@@ -11,7 +11,7 @@ describe Puppet::Type.type(:grafana_dashboard_permission) do
       user: 'foo_user',
       dashboard: 'foo_dashboard',
       permission: 'View',
-      ensure: :present
+      ensure: :present,
     )
   end
 

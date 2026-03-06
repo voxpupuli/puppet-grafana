@@ -21,7 +21,7 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'package',
-            version: '11.0.0'
+            version: '11.0.0',
           }
         end
 
@@ -32,7 +32,7 @@ describe 'grafana' do
           describe 'use archive to fetch the package to a temporary location' do
             it do
               expect(subject).to contain_archive('/tmp/grafana.deb').with_source(
-                'https://dl.grafana.com/oss/release/grafana_11.0.0_amd64.deb'
+                'https://dl.grafana.com/oss/release/grafana_11.0.0_amd64.deb',
               )
             end
 
@@ -66,8 +66,8 @@ describe 'grafana' do
               'grafana-wizzle' => { 'ensure' => 'present' },
               'grafana-woozle' => { 'ensure' => 'absent' },
               'grafana-plugin' => { 'ensure' => 'present', 'repo' => 'https://nexus.company.com/grafana/plugins' },
-              'grafana-plugin-url' => { 'ensure' => 'present', 'plugin_url' => 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download' }
-            }
+              'grafana-plugin-url' => { 'ensure' => 'present', 'plugin_url' => 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download' },
+            },
           }
         end
 
@@ -86,7 +86,7 @@ describe 'grafana' do
       context 'with parameter install_method is set to repo' do
         let(:params) do
           {
-            install_method: 'repo'
+            install_method: 'repo',
           }
         end
 
@@ -126,7 +126,7 @@ describe 'grafana' do
           {
             install_method: 'repo',
             manage_package_repo: false,
-            version: 'present'
+            version: 'present',
           }
         end
 
@@ -158,7 +158,7 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'archive',
-            version: '11.0.0'
+            version: '11.0.0',
           }
         end
 
@@ -235,7 +235,7 @@ describe 'grafana' do
           describe 'should not raise an error when cfg parameter is a hash' do
             let(:params) do
               {
-                cfg: {}
+                cfg: {},
               }
             end
 
@@ -258,24 +258,24 @@ describe 'grafana' do
                   'string' => 'production',
                   'number' => 8080,
                   'boolean' => false,
-                  'empty' => ''
-                }
+                  'empty' => '',
+                },
               },
               ldap_cfg: {
                 'servers' => [
                   { 'host' => 'server1',
                     'use_ssl' => true,
                     'search_filter' => '(sAMAccountName=%s)',
-                    'search_base_dns' => ['dc=domain1,dc=com'] }
+                    'search_base_dns' => ['dc=domain1,dc=com'], },
                 ],
                 'servers.attributes' => {
                   'name' => 'givenName',
                   'surname' => 'sn',
                   'username' => 'sAMAccountName',
                   'member_of' => 'memberOf',
-                  'email' => 'mail'
-                }
-              }
+                  'email' => 'mail',
+                },
+              },
             }
           end
 
@@ -318,8 +318,8 @@ describe 'grafana' do
                     'user' => 'grafana',
                     'password' => 'hunter2',
                   },
-                }
-              )
+                },
+              ),
             }
           end
 
@@ -352,32 +352,32 @@ describe 'grafana' do
                     { 'host' => 'server1a server1b',
                       'use_ssl' => true,
                       'search_filter' => '(sAMAccountName=%s)',
-                      'search_base_dns' => ['dc=domain1,dc=com'] }
+                      'search_base_dns' => ['dc=domain1,dc=com'], },
                   ],
                   'servers.attributes' => {
                     'name' => 'givenName',
                     'surname' => 'sn',
                     'username' => 'sAMAccountName',
                     'member_of' => 'memberOf',
-                    'email' => 'mail'
-                  }
+                    'email' => 'mail',
+                  },
                 },
                 {
                   'servers' => [
                     { 'host' => 'server2a server2b',
                       'use_ssl' => true,
                       'search_filter' => '(sAMAccountName=%s)',
-                      'search_base_dns' => ['dc=domain2,dc=com'] }
+                      'search_base_dns' => ['dc=domain2,dc=com'], },
                   ],
                   'servers.attributes' => {
                     'name' => 'givenName',
                     'surname' => 'sn',
                     'username' => 'sAMAccountName',
                     'member_of' => 'memberOf',
-                    'email' => 'mail'
-                  }
-                }
-              ]
+                    'email' => 'mail',
+                  },
+                },
+              ],
             }
           end
 
@@ -419,15 +419,15 @@ describe 'grafana' do
               { 'host' => 'server1a server1b',
                 'use_ssl' => true,
                 'search_filter' => '(sAMAccountName=%s)',
-                'search_base_dns' => ['dc=domain1,dc=com'] }
+                'search_base_dns' => ['dc=domain1,dc=com'], },
             ],
             'servers.attributes' => {
               'name' => 'givenName',
               'surname' => 'sn',
               'username' => 'sAMAccountName',
               'member_of' => 'memberOf',
-              'email' => 'mail'
-            }
+              'email' => 'mail',
+            },
           }
         end
 
@@ -453,7 +453,7 @@ describe 'grafana' do
         context 'Sensitive[Hash]' do
           let(:params) do
             {
-              ldap_cfg: sensitive(ldap_cfg)
+              ldap_cfg: sensitive(ldap_cfg),
             }
           end
 
@@ -463,7 +463,7 @@ describe 'grafana' do
         context 'Sensitive[Array[Hash]]' do
           let(:params) do
             {
-              ldap_cfg: sensitive([ldap_cfg])
+              ldap_cfg: sensitive([ldap_cfg]),
             }
           end
 
@@ -486,11 +486,11 @@ describe 'grafana' do
                   disableDeletion: true,
                   options: {
                     path: '/var/lib/grafana/dashboards',
-                    puppetsource: 'puppet:///modules/my_custom_module/dashboards'
-                  }
-                }
-              ]
-            }
+                    puppetsource: 'puppet:///modules/my_custom_module/dashboards',
+                  },
+                },
+              ],
+            },
           }
         end
 
@@ -502,7 +502,7 @@ describe 'grafana' do
             mode: '0750',
             recurse: true,
             purge: true,
-            source: 'puppet:///modules/my_custom_module/dashboards'
+            source: 'puppet:///modules/my_custom_module/dashboards',
           )
         end
 
@@ -520,11 +520,11 @@ describe 'grafana' do
                     type: 'file',
                     disableDeletion: true,
                     options: {
-                      path: '/var/lib/grafana/dashboards'
-                    }
-                  }
-                ]
-              }
+                      path: '/var/lib/grafana/dashboards',
+                    },
+                  },
+                ],
+              },
             }
           end
 
@@ -545,9 +545,9 @@ describe 'grafana' do
                   access: 'proxy',
                   url: 'http://localhost:9090/',
                   isDefault: true,
-                }
-              ]
-            }
+                },
+              ],
+            },
           }
         end
 
@@ -563,7 +563,7 @@ describe 'grafana' do
             ensure: 'file',
             owner: 'grafana',
             group: 'grafana',
-            mode: '0640'
+            mode: '0640',
           )
         end
       end
@@ -572,7 +572,7 @@ describe 'grafana' do
         let(:params) do
           {
             install_method: 'repo',
-            sysconfig: { http_proxy: 'http://proxy.example.com/' }
+            sysconfig: { http_proxy: 'http://proxy.example.com/' },
           }
         end
 

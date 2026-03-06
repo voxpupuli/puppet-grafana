@@ -110,7 +110,7 @@ Puppet::Type.newtype(:grafana_ldap_config) do
       server_block = {
         'servers' => [server_params],
         'servers.attributes' => server_attributes,
-        'servers.group_mappings' => server_group_mappings
+        'servers.group_mappings' => server_group_mappings,
       }.compact
 
       @generated_config[server_k] = server_block
@@ -139,7 +139,7 @@ Puppet::Type.newtype(:grafana_ldap_config) do
      #     :seltype,
      #     :seluser,
      #     :show_diff,
-     :validate_cmd].each do |param|
+     :validate_cmd,].each do |param|
       file_opts[param] = self[param] unless self[param].nil?
     end
 

@@ -60,7 +60,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
 
         {
           id: fetch_organization['id'],
-          name: fetch_organization['name']
+          name: fetch_organization['name'],
         }
       end
     rescue JSON::ParserError
@@ -105,7 +105,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
     if @folder.nil?
       data = {
         title: resource[:title],
-        uid: resource[:uid]
+        uid: resource[:uid],
       }
 
       response = send_request('POST', format('%s/folders', resource[:grafana_api_path]), data)
@@ -118,7 +118,7 @@ Puppet::Type.type(:grafana_folder).provide(:grafana, parent: Puppet::Provider::G
       data = {
         folder: folder.merge('title' => resource[:title],
                              'uid' => @folder['uid']),
-        overwrite: !@folder.nil?
+        overwrite: !@folder.nil?,
       }
 
       response = send_request('POST', format('%s/folders/%s', resource[:grafana_api_path], @folder['uid']), data)

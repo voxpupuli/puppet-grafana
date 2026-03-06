@@ -162,7 +162,7 @@ Puppet::Type.newtype(:grafana_ldap_server) do
 
   def set_sensitive_parameters(sensitive_parameters) # rubocop:disable Naming/AccessorMethodName
     parameter(:bind_password).sensitive = true if parameter(:bind_password)
-    super(sensitive_parameters)
+    super
   end
 
   def group_mappings

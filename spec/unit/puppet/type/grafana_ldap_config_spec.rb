@@ -153,7 +153,7 @@ describe Puppet::Type.type(:grafana_ldap_config) do
       server = Puppet::Type.type(:grafana_ldap_server).new(
         name: 'ldap.example.com',
         hosts: ['ldap.example.com'],
-        search_base_dns: ['ou=auth']
+        search_base_dns: ['ou=auth'],
       )
       config = Puppet::Type.type(:grafana_ldap_config).new name: 'ldap1'
 

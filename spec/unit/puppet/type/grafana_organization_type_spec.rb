@@ -8,7 +8,7 @@ describe Puppet::Type.type(:grafana_organization) do
       name: 'foo',
       grafana_url: 'http://example.com',
       grafana_user: 'admin',
-      grafana_password: 'admin'
+      grafana_password: 'admin',
     )
   end
 

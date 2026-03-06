@@ -24,7 +24,7 @@ describe Puppet::Type.type(:grafana_notification) do
       is_default: true,
       send_reminder: true,
       frequency: '20m',
-      settings: { adresses: 'test@example.com' }
+      settings: { adresses: 'test@example.com' },
     )
   end
 
