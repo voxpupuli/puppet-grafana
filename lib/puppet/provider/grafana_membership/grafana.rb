@@ -17,7 +17,7 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
       organization = parse_response(response.body)
       {
         id: organization['id'],
-        name: organization['name']
+        name: organization['name'],
       }
     end
   end
@@ -32,8 +32,8 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
   def organization
     return @organization if @organization
 
-    org = resource[:membership_type] == :organization ? resource[:target_name] : resource[:organization]
-    key = org.is_a?(Numeric) || org.match(%r{/^[0-9]*$/}) ? :id : :name
+    org = (resource[:membership_type] == :organization) ? resource[:target_name] : resource[:organization]
+    key = (org.is_a?(Numeric) || org.match(%r{/^[0-9]*$/})) ? :id : :name
     @organization = organizations.find { |x| x[key] == org }
   end
 
@@ -45,7 +45,7 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
         organization: team['orgId'],
         membercount: team['membercount'],
         permission: team['permission'],
-        email: team['email']
+        email: team['email'],
       }
     end
   end
@@ -69,7 +69,7 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
       {
         id: member['userId'],
         target_name: member['teamId'],
-        organization: member['orgId']
+        organization: member['orgId'],
       }
     end
   end
@@ -114,7 +114,7 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
         id: user['userId'],
         name: user['login'],
         organization: user['orgId'],
-        role: user['role']
+        role: user['role'],
       }
     end
   end
@@ -170,7 +170,7 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
     endpoint = format('%s/org/users', resource[:grafana_api_path])
     request_data = {
       role: resource[:role],
-      loginOrEmail: resource[:user_name]
+      loginOrEmail: resource[:user_name],
     }
     if exists?
       verb = 'PATCH'
@@ -217,7 +217,7 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
 
   def destroy
     set_current_organization
-    resource[:membership_type] == :organization ? destroy_organization_membership : destroy_team_membership
+    (resource[:membership_type] == :organization) ? destroy_organization_membership : destroy_team_membership
   end
 
   def user_in_organization?
@@ -236,6 +236,6 @@ Puppet::Type.type(:grafana_membership).provide(:grafana, parent: Puppet::Provide
 
   def exists?
     user
-    resource[:membership_type] == :organization ? user_in_organization? : user_in_team?
+    (resource[:membership_type] == :organization) ? user_in_organization? : user_in_team?
   end
 end

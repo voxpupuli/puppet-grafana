@@ -38,7 +38,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
       organization = parse_response(response.body)
       {
         id: organization['id'],
-        name: organization['name']
+        name: organization['name'],
       }
     end
   end
@@ -54,7 +54,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
     return @organization if @organization
 
     org = resource[:organization]
-    key = org.is_a?(Numeric) || org.match(%r{/^[0-9]*$/}) ? :id : :name
+    key = (org.is_a?(Numeric) || org.match(%r{/^[0-9]*$/})) ? :id : :name
     @organization = organizations.find { |x| x[key] == org }
   end
 
@@ -66,7 +66,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
         organization: team['orgId'],
         membercount: team['membercount'],
         permission: team['permission'],
-        email: team['email']
+        email: team['email'],
       }
     end
   end
@@ -101,7 +101,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
         id: user['userId'],
         name: user['login'],
         organization: user['orgId'],
-        role: user['role']
+        role: user['role'],
       }
     end
   end
@@ -119,7 +119,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
     dashboards.map do |dashboard|
       {
         id: dashboard['id'],
-        name: dashboard['title']
+        name: dashboard['title'],
       }
     end
   end
@@ -146,7 +146,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
         permission: permission['permissionName'],
         dashboard: permission['title'],
         isFolder: permission['isFolder'],
-        inherited: permission['inherited']
+        inherited: permission['inherited'],
       }
     end
   end
@@ -194,7 +194,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
 
     {
       key => subject_id,
-      'permission' => permission
+      'permission' => permission,
     }
   end
 
@@ -213,7 +213,7 @@ Puppet::Type.type(:grafana_dashboard_permission).provide(:grafana, parent: Puppe
       type = perm[:userId].zero? ? :teamId : :userId
       {
         type => target,
-        :permission => perm[:permissionId]
+        :permission => perm[:permissionId],
       }
     end
   end

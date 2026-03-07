@@ -115,6 +115,8 @@ Data type: `String`
 
 Location of the configuration file.
 
+Default value: `'/etc/grafana/grafana.ini'`
+
 ##### <a name="-grafana--ldap_cfg"></a>`ldap_cfg`
 
 Data type: `Optional[Variant[Hash,Array[Hash],Sensitive[Hash],Sensitive[Array[Hash]]]]`
@@ -166,17 +168,23 @@ Set to 'docker' to install Grafana using the official Docker container.
 Set to 'package' to install Grafana using .deb or .rpm packages.
 Set to 'repo' to install Grafana using an apt or yum repository.
 
+Default value: `'package'`
+
 ##### <a name="-grafana--manage_package_repo"></a>`manage_package_repo`
 
 Data type: `Boolean`
 
 If true this will setup the official grafana repositories on your host.
 
+Default value: `true`
+
 ##### <a name="-grafana--package_name"></a>`package_name`
 
 Data type: `String`
 
 The name of the package managed with the 'package' install method.
+
+Default value: `'grafana'`
 
 ##### <a name="-grafana--package_source"></a>`package_source`
 
@@ -191,6 +199,8 @@ Default value: `undef`
 Data type: `String`
 
 The name of the service managed with the 'archive' and 'package' install methods.
+
+Default value: `'grafana-server'`
 
 ##### <a name="-grafana--version"></a>`version`
 
@@ -242,6 +252,8 @@ Data type: `Optional[Stdlib::HTTPUrl]`
 
 When using 'repo' install_method, the repo_url to look for packages in.
 Set to a custom string value to install from a custom repo.
+
+Default value: `undef`
 
 ##### <a name="-grafana--plugins"></a>`plugins`
 
@@ -313,6 +325,8 @@ Data type: `Optional[String]`
 
 Location of the sysconfig file for the environment of the grafana-server service.
 This is only used when the install_method is 'package' or 'repo'.
+
+Default value: `undef`
 
 ##### <a name="-grafana--sysconfig"></a>`sysconfig`
 

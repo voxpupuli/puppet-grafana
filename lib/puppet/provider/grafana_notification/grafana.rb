@@ -35,7 +35,7 @@ Puppet::Type.type(:grafana_notification).provide(:grafana, parent: Puppet::Provi
           is_default: notification['isDefault'] ? :true : :false,
           send_reminder: notification['sendReminder'] ? :true : :false,
           frequency: notification['frequency'],
-          settings: notification['settings']
+          settings: notification['settings'],
         }
       end
     rescue JSON::ParserError
@@ -59,7 +59,6 @@ Puppet::Type.type(:grafana_notification).provide(:grafana, parent: Puppet::Provi
     save_notification
   end
 
-  # rubocop:disable Style/PredicateName
   def is_default
     notification[:is_default]
   end
@@ -77,7 +76,6 @@ Puppet::Type.type(:grafana_notification).provide(:grafana, parent: Puppet::Provi
     resource[:send_reminder] = value
     save_notification
   end
-  # rubocop:enable Style/PredicateName
 
   def frequency
     notification[:frequency]
@@ -104,7 +102,7 @@ Puppet::Type.type(:grafana_notification).provide(:grafana, parent: Puppet::Provi
       isDefault: (resource[:is_default] == :true),
       sendReminder: (resource[:send_reminder] == :true),
       frequency: resource[:frequency],
-      settings: resource[:settings]
+      settings: resource[:settings],
     }
 
     if notification.nil?

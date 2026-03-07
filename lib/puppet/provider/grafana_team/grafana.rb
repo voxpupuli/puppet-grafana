@@ -27,7 +27,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
       organization = parse_response(response.body)
       {
         id: organization['id'],
-        name: organization['name']
+        name: organization['name'],
       }
     end
   end
@@ -43,7 +43,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     return @organization if @organization
 
     org = resource[:organization]
-    key = org.is_a?(Numeric) || org.match(%r{/^[0-9]*$/}) ? :id : :name
+    key = (org.is_a?(Numeric) || org.match(%r{/^[0-9]*$/})) ? :id : :name
     @organization = organizations.find { |x| x[key] == org }
   end
 
@@ -55,7 +55,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
         organization: team['orgId'],
         membercount: team['membercount'],
         permission: team['permission'],
-        email: team['email']
+        email: team['email'],
       }
     end
   end
@@ -78,7 +78,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     {
       theme: preferences['theme'],
       home_dashboard: preferences['homeDashboardId'] || preferences['homeDashboardUID'],
-      timezone: preferences['timezone']
+      timezone: preferences['timezone'],
     }
   end
 
@@ -97,7 +97,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     dash = get_dashboard(resource[:home_dashboard], resource[:home_dashboard_folder], true)
     request_data = {
       theme: resource[:theme],
-      timezone: resource[:timezone]
+      timezone: resource[:timezone],
     }
     request_data[:homeDashboardUID] = dash[:uid]
     ['PUT', endpoint, request_data]
@@ -109,7 +109,7 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     setup_save_preferences_data
     response = send_request(*setup_save_preferences_data)
     # TODO: Raise on error?
-    return if response.code == '200' || response.code == '412'
+    return if %w[200 412].include?(response.code)
 
     raise format('Failed to update team %s, (HTTP response: %s/%s)', resource, response.code, response.body)
   end
@@ -159,17 +159,17 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     query = if search
               {
                 query: ident,
-                type: 'dash-db'
+                type: 'dash-db',
               }
             elsif ident.is_a?(Numeric) || ident.match(%r{/^[0-9]*$/})
               {
                 dashboardIds: ident,
-                type: 'dash-db'
+                type: 'dash-db',
               }
             else
               {
                 dashboardUIDs: ident,
-                type: 'dash-db'
+                type: 'dash-db',
               }
             end
     query[:folderIds] = folder_id unless folder_id.nil?
@@ -207,12 +207,12 @@ Puppet::Type.type(:grafana_team).provide(:grafana, parent: Puppet::Provider::Gra
     if ident.is_a?(Numeric) || ident.match(%r{/^[0-9]*$/})
       {
         folderIds: ident,
-        type: 'dash-folder'
+        type: 'dash-folder',
       }
     else
       {
         query: ident,
-        type: 'dash-folder'
+        type: 'dash-folder',
       }
     end
   end

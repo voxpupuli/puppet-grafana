@@ -33,7 +33,7 @@ describe Puppet::Type.type(:grafana_datasource) do
       user: 'db_user',
       password: 'db_password',
       json_data: { esVersion: 5, timeField: '@timestamp', timeInterval: '1m' },
-      secure_json_data: { password: '5ecretPassw0rd' }
+      secure_json_data: { password: '5ecretPassw0rd' },
     )
   end
 

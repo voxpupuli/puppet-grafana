@@ -37,7 +37,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
 
         {
           id: fetch_organization['id'],
-          name: fetch_organization['name']
+          name: fetch_organization['name'],
         }
       end
     rescue JSON::ParserError
@@ -122,7 +122,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
                                  'uid' => @dashboard ? @dashboard['uid'] : slug,
                                  'version' => @dashboard ? @dashboard['version'] + 1 : 0),
       folderId: @folder ? @folder['id'] : nil,
-      overwrite: !@dashboard.nil?
+      overwrite: !@dashboard.nil?,
     }
 
     response = send_request('POST', format('%s/dashboards/db', resource[:grafana_api_path]), data)

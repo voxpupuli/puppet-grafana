@@ -34,7 +34,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
 
         {
           id: fetch_organization['id'],
-          name: fetch_organization['name']
+          name: fetch_organization['name'],
         }
       end
     rescue JSON::ParserError
@@ -108,12 +108,9 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
     datasource['password']
   end
 
-  # rubocop:disable Naming/PredicateName
   def is_default
     datasource['isDefault']
   end
-
-  # rubocop:enable Naming/PredicateName
 
   def basic_auth
     datasource['basicAuth']
@@ -179,7 +176,7 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
                     :user,
                     :password,
                     :withCredentials,
-                    :uid
+                    :uid,
                   ))
     end
 
@@ -200,8 +197,8 @@ Puppet::Type.type(:grafana_datasource).provide(:grafana, parent: Puppet::Provide
         password: resource['password'],
         withCredentials: resource['with_credentials'],
         secureJsonData: resource['secure_json_data'],
-        uid: resource['uid']
-      }.compact
+        uid: resource['uid'],
+      }.compact,
     )
 
     # Puppet properties need to work with symbols, but the Grafana API will want to receive actual Booleans

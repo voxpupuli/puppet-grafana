@@ -11,7 +11,7 @@ describe Puppet::Type.type(:grafana_team) do
       grafana_password: 'admin',
       home_dashboard_folder: 'bar',
       home_dashboard: 'foo_dashboard',
-      organization: 'foo_organization'
+      organization: 'foo_organization',
     )
   end
 

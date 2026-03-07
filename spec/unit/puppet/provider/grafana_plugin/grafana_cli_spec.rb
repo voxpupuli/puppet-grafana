@@ -6,7 +6,7 @@ provider_class = Puppet::Type.type(:grafana_plugin).provider(:grafana_cli)
 describe provider_class do
   let(:resource) do
     Puppet::Type::Grafana_plugin.new(
-      name: 'grafana-wizzle'
+      name: 'grafana-wizzle',
     )
   end
   let(:provider) { provider_class.new(resource) }
@@ -59,7 +59,7 @@ describe provider_class do
     let(:resource) do
       Puppet::Type::Grafana_plugin.new(
         name: 'grafana-plugin',
-        repo: 'https://nexus.company.com/grafana/plugins'
+        repo: 'https://nexus.company.com/grafana/plugins',
       )
     end
 
@@ -74,7 +74,7 @@ describe provider_class do
     let(:resource) do
       Puppet::Type::Grafana_plugin.new(
         name: 'grafana-simple-json-datasource',
-        plugin_url: 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download'
+        plugin_url: 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download',
       )
     end
 

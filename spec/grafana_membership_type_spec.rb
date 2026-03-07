@@ -12,7 +12,7 @@ describe Puppet::Type.type(:grafana_membership) do
       grafana_api_path: '/api',
       membership_type: 'organization',
       role: 'Viewer',
-      ensure: :present
+      ensure: :present,
     )
   end
 
