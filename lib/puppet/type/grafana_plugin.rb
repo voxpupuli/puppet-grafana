@@ -19,6 +19,11 @@ Puppet::Type.newtype(:grafana_plugin) do
        plugin_url => 'https://github.com/example/example-custom-plugin/zipball/v1.0.0'
      }
 
+    @example Install a specific version of a grafana plugin
+     grafana_plugin { 'grafana-simple-json-datasource':
+       ensure => '1.4.0',
+     }
+
     @example Uninstall a grafana plugin
      grafana_plugin { 'grafana-simple-json-datasource':
        ensure => 'absent',
@@ -28,13 +33,37 @@ Puppet::Type.newtype(:grafana_plugin) do
      $ puppet resource grafana_plugin
   DESC
 
-  ensurable do
+  newproperty(:ensure) do
+    desc 'Whether the plugin should be present, absent, or pinned to a specific version.'
+
     defaultto(:present)
+
     newvalue(:present) do
       provider.create
     end
+
     newvalue(:absent) do
       provider.destroy
+    end
+
+    newvalue(%r{^\d[0-9A-Za-z.+-]*$}) do
+      provider.create
+    end
+
+    def retrieve
+      version = provider.installed_version
+      return :absent if version.nil? || version.empty?
+
+      version
+    end
+
+    def insync?(is)
+      desired = should.is_a?(Array) ? should.first : should
+
+      return is != :absent if desired == :present
+      return is == :absent if desired == :absent
+
+      is.to_s.strip == desired.to_s.strip
     end
   end
 

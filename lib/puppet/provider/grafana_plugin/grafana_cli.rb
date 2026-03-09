@@ -9,24 +9,36 @@ Puppet::Type.type(:grafana_plugin).provide(:grafana_cli) do
 
   mk_resource_methods
 
-  def self.all_plugins
-    plugins = []
-    grafana_cli('plugins', 'ls').split(%r{\n}).each do |line|
-      next unless line =~ %r{^(\S+)\s+@\s+((?:\d\.).+)\s*$}
+  def self.parse_plugin_line(line)
+    return nil unless line.include?('@')
 
-      name = Regexp.last_match(1)
-      version = Regexp.last_match(2)
+    name, raw_version = line.strip.split(%r{\s+@\s+}, 2)
+    return nil if name.nil? || raw_version.nil?
+
+    version = raw_version.strip.split(%r{\s+}, 2).first
+    return nil if version.nil? || version.empty?
+
+    [name, version]
+  end
+
+  def self.all_plugins
+    plugins = {}
+    grafana_cli('plugins', 'ls').split(%r{\n}).each do |line|
+      parsed = parse_plugin_line(line)
+      next unless parsed
+
+      name, version = parsed
       Puppet.debug("Found grafana plugin #{name} #{version}")
-      plugins.push(name)
+      plugins[name] = version
     end
-    plugins.sort
+    plugins
   end
 
   def self.instances
     resources = []
-    all_plugins.each do |name|
+    all_plugins.each do |name, version|
       plugin = {
-        ensure: :present,
+        ensure: version,
         name: name,
       }
       resources << new(plugin) if plugin[:name]
@@ -43,20 +55,36 @@ Puppet::Type.type(:grafana_plugin).provide(:grafana_cli) do
     end
   end
 
+  def installed_version
+    version = @property_hash[:ensure]
+    normalized = version.to_s.strip
+    return normalized unless normalized.empty? || normalized == 'present' || normalized == 'absent'
+
+    detected = self.class.all_plugins[resource[:name]]
+    detected&.to_s&.strip
+  end
+
   def exists?
-    @property_hash[:ensure] == :present
+    version = installed_version
+    return false if version.nil? || version.empty?
+
+    return true if resource[:ensure] == :present
+
+    version == resource[:ensure].to_s.strip
   end
 
   def create
+    version = resource[:ensure] unless resource[:ensure].is_a?(Symbol)
+
+    cmd = ['plugins', 'install', resource[:name]]
     if resource[:repo]
-      repo = "--repo #{resource[:repo]}"
-      grafana_cli(repo, 'plugins', 'install', resource[:name])
+      cmd.unshift('--repo', resource[:repo])
     elsif resource[:plugin_url]
-      grafana_cli('--pluginUrl', resource[:plugin_url], 'plugins', 'install', resource[:name])
-    else
-      grafana_cli('plugins', 'install', resource[:name])
+      cmd.unshift('--pluginUrl', resource[:plugin_url])
     end
-    @property_hash[:ensure] = :present
+    cmd << version if version
+    grafana_cli(*cmd)
+    @property_hash[:ensure] = version || :present
   end
 
   def destroy

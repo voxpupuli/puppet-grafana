@@ -31,15 +31,61 @@ describe provider_class do
 
     it 'has the correct names' do
       allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_two)
-      expect(provider_class.instances.map(&:name)).to match_array(%w[grafana-simple-json-datasource jdbranham-diagram-panel])
-      expect(provider_class).to have_received(:grafana_cli)
+      instances = provider_class.instances
+      expect(instances.map(&:name)).to match_array(%w[grafana-simple-json-datasource jdbranham-diagram-panel])
+      expect(instances.find { |plugin| plugin.name == 'grafana-simple-json-datasource' }.ensure).to eq('1.3.4')
+      expect(provider_class).to have_received(:grafana_cli).once
     end
 
     it 'does not match if there are no plugins' do
       allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_none)
       expect(provider_class.instances.size).to eq(0)
       expect(provider.exists?).to eq(false)
-      expect(provider_class).to have_received(:grafana_cli)
+      expect(provider_class).to have_received(:grafana_cli).twice
+    end
+
+    it 'normalizes trailing whitespace in plugin versions' do
+      plugins_ls_with_whitespace = "installed plugins:\ngrafana-simple-json-datasource @ 1.3.4   \n"
+      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_with_whitespace)
+
+      instances = provider_class.instances
+      expect(instances.find { |plugin| plugin.name == 'grafana-simple-json-datasource' }.ensure).to eq('1.3.4')
+    end
+
+    it 'parses plugin version when grafana adds extra trailing metadata' do
+      plugins_ls_with_metadata = "installed plugins:\nvertamedia-clickhouse-datasource @ 3.4.8 (unsigned)\n"
+      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_with_metadata)
+
+      instances = provider_class.instances
+      expect(instances.find { |plugin| plugin.name == 'vertamedia-clickhouse-datasource' }.ensure).to eq('3.4.8')
+    end
+
+    it 'parses plugin lines with leading whitespace' do
+      plugins_ls_with_indent = "installed plugins:\n  vertamedia-clickhouse-datasource @ 3.4.8\n"
+      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_with_indent)
+
+      instances = provider_class.instances
+      expect(instances.find { |plugin| plugin.name == 'vertamedia-clickhouse-datasource' }.ensure).to eq('3.4.8')
+    end
+  end
+
+  describe '#exists?' do
+    let(:resource) do
+      Puppet::Type::Grafana_plugin.new(
+        name: 'grafana-wizzle',
+        ensure: '1.4.0',
+      )
+    end
+
+    it 'matches when installed version has trailing whitespace' do
+      provider.instance_variable_set(:@property_hash, ensure: "1.4.0\r")
+      expect(provider.exists?).to eq(true)
+    end
+
+    it 'matches desired version when property hash is present but list reports version' do
+      provider.instance_variable_set(:@property_hash, ensure: :present)
+      allow(provider_class).to receive(:all_plugins).and_return('grafana-wizzle' => '1.4.0')
+      expect(provider.exists?).to eq(true)
     end
   end
 
@@ -47,6 +93,21 @@ describe provider_class do
     allow(provider).to receive(:grafana_cli)
     provider.create
     expect(provider).to have_received(:grafana_cli).with('plugins', 'install', 'grafana-wizzle')
+  end
+
+  describe '#create with version in ensure' do
+    let(:resource) do
+      Puppet::Type::Grafana_plugin.new(
+        name: 'grafana-wizzle',
+        ensure: '1.4.0',
+      )
+    end
+
+    it 'installs specific plugin version' do
+      allow(provider).to receive(:grafana_cli)
+      provider.create
+      expect(provider).to have_received(:grafana_cli).with('plugins', 'install', 'grafana-wizzle', '1.4.0')
+    end
   end
 
   it '#destroy' do
@@ -66,7 +127,23 @@ describe provider_class do
     it '#create with repo' do
       allow(provider).to receive(:grafana_cli)
       provider.create
-      expect(provider).to have_received(:grafana_cli).with('--repo https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin')
+      expect(provider).to have_received(:grafana_cli).with('--repo', 'https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin')
+    end
+  end
+
+  describe 'create with repo and version in ensure' do
+    let(:resource) do
+      Puppet::Type::Grafana_plugin.new(
+        name: 'grafana-plugin',
+        repo: 'https://nexus.company.com/grafana/plugins',
+        ensure: '1.4.0',
+      )
+    end
+
+    it 'installs specific version from repo' do
+      allow(provider).to receive(:grafana_cli)
+      provider.create
+      expect(provider).to have_received(:grafana_cli).with('--repo', 'https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin', '1.4.0')
     end
   end
 
