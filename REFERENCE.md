@@ -1342,6 +1342,14 @@ grafana_plugin { 'grafana-example-custom-plugin':
 }
 ```
 
+##### Install a specific version of a grafana plugin
+
+```puppet
+grafana_plugin { 'grafana-simple-json-datasource':
+  ensure => '1.4.0',
+}
+```
+
 ##### Uninstall a grafana plugin
 
 ```puppet
@@ -1362,9 +1370,9 @@ The following properties are available in the `grafana_plugin` type.
 
 ##### `ensure`
 
-Valid values: `present`, `absent`
+Valid values: `present`, `absent`, `%r{^\d[0-9A-Za-z.+-]*$}`
 
-The basic property that the resource should be in.
+Whether the plugin should be present, absent, or pinned to a specific version.
 
 Default value: `present`
 

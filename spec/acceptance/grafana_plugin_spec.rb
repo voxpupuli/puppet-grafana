@@ -96,7 +96,24 @@ supported_versions.each do |grafana_version|
       end
     end
 
-    context 'grafana plugins' do
+    context 'grafana plugins version' do
+      it 'installs specific version' do
+        pp = <<-EOS
+        class { 'grafana':
+          version => "#{grafana_version}"
+        }
+
+        grafana_plugin { 'grafana-simple-json-datasource':
+          ensure   => '1.4.0',
+        }
+        EOS
+        # Run it twice and test for idempotency
+        apply_manifest(pp, catch_failures: true)
+        apply_manifest(pp, catch_changes: true)
+      end
+    end
+
+    context 'grafana package provider' do
       it 'installs specific version' do
         pp = <<-EOS
         class { 'grafana':
