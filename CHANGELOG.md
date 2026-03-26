@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v15.0.0](https://github.com/voxpupuli/puppet-grafana/tree/v15.0.0) (2026-03-26)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v14.2.0...v15.0.0)
+
+**Breaking changes:**
+
+- Drop puppet, update openvox minimum version to 8.19 [\#387](https://github.com/voxpupuli/puppet-grafana/pull/387) ([TheMeier](https://github.com/TheMeier))
+
+**Implemented enhancements:**
+
+- grafana\_plugin: update type/provider to support version numbers [\#396](https://github.com/voxpupuli/puppet-grafana/pull/396) ([b4ldr](https://github.com/b4ldr))
+- Add package provider for improved plugin handling [\#332](https://github.com/voxpupuli/puppet-grafana/pull/332) ([TuningYourCode](https://github.com/TuningYourCode))
+
+**Closed issues:**
+
+- Toml gem required even when not using ldap\_cfg [\#338](https://github.com/voxpupuli/puppet-grafana/issues/338)
+- Feature Request: version support in plugin module [\#178](https://github.com/voxpupuli/puppet-grafana/issues/178)
+
 ## [v14.2.0](https://github.com/voxpupuli/puppet-grafana/tree/v14.2.0) (2025-07-24)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v14.1.0...v14.2.0)
