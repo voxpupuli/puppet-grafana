@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 Puppet::Type.type(:grafana_plugin).provide(:grafana_cli) do
-  commands grafana_cli: 'grafana-cli'
+  has_command(:grafana, 'grafana') do
+    is_optional
+  end
 
   defaultfor feature: :posix
 
@@ -21,13 +23,17 @@ Puppet::Type.type(:grafana_plugin).provide(:grafana_cli) do
 
   def self.all_plugins
     plugins = {}
-    grafana_cli('plugins', 'ls').split(%r{\n}).each do |line|
-      parsed = parse_plugin_line(line)
-      next unless parsed
+    if command(:grafana)
+      grafana('cli', 'plugins', 'ls').split(%r{\n}).each do |line|
+        parsed = parse_plugin_line(line)
+        next unless parsed
 
-      name, version = parsed
-      Puppet.debug("Found grafana plugin #{name} #{version}")
-      plugins[name] = version
+        name, version = parsed
+        Puppet.debug("Found grafana plugin #{name} #{version}")
+        plugins[name] = version
+      end
+    else
+      Puppet.debug('No grafana_cli command found')
     end
     plugins
   end
@@ -81,12 +87,24 @@ Puppet::Type.type(:grafana_plugin).provide(:grafana_cli) do
       cmd.unshift('--pluginUrl', resource[:plugin_url])
     end
     cmd << version if version
-    grafana_cli(*cmd)
+    begin
+      grafana('cli', *cmd)
+    rescue Puppet::Error, Puppet::ExecutionFailure => e
+      Puppet.debug("Unable to install grafana plugin #{resource[:name]}: #{e.message}")
+      return
+    end
+
     @property_hash[:ensure] = version || :present
   end
 
   def destroy
-    grafana_cli('plugins', 'uninstall', resource[:name])
+    if command(:grafana)
+      grafana('cli', 'plugins', 'uninstall', resource[:name])
+    else
+      Puppet.debug("No grafana_cli command found, unable to uninstall grafana plugin #{resource[:name]}")
+      return
+    end
+
     @property_hash[:ensure] = :absent
   end
 end
