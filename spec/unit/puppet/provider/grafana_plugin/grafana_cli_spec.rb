@@ -4,6 +4,10 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:grafana_plugin).provider(:grafana_cli)
 describe provider_class do
+  let(:provider_file) do
+    File.expand_path('../../../../../lib/puppet/provider/grafana_plugin/grafana_cli.rb', __dir__)
+  end
+
   let(:resource) do
     Puppet::Type::Grafana_plugin.new(
       name: 'grafana-wizzle',
@@ -159,6 +163,17 @@ describe provider_class do
       allow(provider).to receive(:grafana_cli)
       provider.create
       expect(provider).to have_received(:grafana_cli).with('--pluginUrl', 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download', 'plugins', 'install', 'grafana-simple-json-datasource')
+    end
+  end
+
+  describe 'provider suitability' do
+    it 'is suitable when grafana-cli is unavailable' do
+      allow(Puppet::Util).to receive(:which).and_call_original
+      allow(Puppet::Util).to receive(:which).with('grafana-cli').and_return(nil)
+
+      load provider_file
+
+      expect(Puppet::Type.type(:grafana_plugin).provider(:grafana_cli).suitable?).to be(true)
     end
   end
 end
