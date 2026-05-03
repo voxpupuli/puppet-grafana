@@ -110,5 +110,38 @@ supported_versions.each do |grafana_version|
         end
       end
     end
+
+    describe 'postgres ds' do
+      context 'without basic auth' do
+        let(:manifest) do
+          <<-PUPPET
+          ['Foo', 'Bar'].each |$organization| {
+              grafana_organization { $organization:
+                ensure           => present,
+                grafana_url      => 'http://localhost:3000',
+                grafana_user     => 'admin',
+                grafana_password => 'admin',
+              } ->
+              grafana_datasource { $organization:
+                organization     => $organization,
+                type             => 'grafana-postgresql-datasource',
+                url              => 'localhost',
+                grafana_url      => 'http://localhost:3000',
+                grafana_user     => 'admin',
+                grafana_password => 'admin',
+              }
+          }
+          PUPPET
+        end
+
+        it 'works with no errors' do
+          apply_manifest_on(default, manifest, catch_failures: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(default, manifest, catch_changes: true)
+        end
+      end
+    end
   end
 end
