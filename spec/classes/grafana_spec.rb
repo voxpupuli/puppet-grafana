@@ -230,244 +230,144 @@ describe 'grafana' do
         end
       end
 
-      context 'invalid parameters' do
-        context 'cfg' do
-          describe 'should not raise an error when cfg parameter is a hash' do
-            let(:params) do
-              {
-                cfg: {},
-              }
-            end
+      context 'with cfg unset' do
+        it { is_expected.to contain_file('grafana.ini').with_content("# This file is managed by Puppet, any changes will be overwritten\n\n") }
+      end
 
-            it { is_expected.to contain_package('grafana') }
-          end
+      context 'with cfg' do
+        let(:cfg_hash) do
+          {
+            'app_mode' => 'production',
+            'section' => {
+              'string' => 'production',
+              'number' => 8080,
+              'boolean' => false,
+              'empty' => '',
+            },
+          }
+        end
+
+        let(:cfg_toml) do
+          # Using variable here to workaround formatters stripping trailing
+          # spaces in the heredoc below
+          empty = ''
+          <<~CONTEXT
+            # This file is managed by Puppet, any changes will be overwritten
+
+            app_mode = production
+
+            [section]
+            boolean = false
+            empty = #{empty}
+            number = 8080
+            string = production
+          CONTEXT
+        end
+
+        context 'when Hash' do
+          let(:params) { { cfg: cfg_hash } }
+
+          it { is_expected.to contain_file('grafana.ini').with_content(cfg_toml) }
+        end
+
+        context 'when Sensitive[Hash]' do
+          let(:params) { { cfg: sensitive(cfg_hash) } }
+
+          it { is_expected.to contain_file('grafana.ini').with_content(sensitive(cfg_toml)) }
         end
       end
 
-      context 'configuration file' do
-        describe 'should not contain any configuration when cfg param is empty' do
-          it { is_expected.to contain_file('grafana.ini').with_content("# This file is managed by Puppet, any changes will be overwritten\n\n") }
-        end
-
-        describe 'should correctly transform cfg param entries to Grafana configuration' do
-          let(:params) do
-            {
-              cfg: {
-                'app_mode' => 'production',
-                'section' => {
-                  'string' => 'production',
-                  'number' => 8080,
-                  'boolean' => false,
-                  'empty' => '',
-                },
-              },
-              ldap_cfg: {
-                'servers' => [
-                  { 'host' => 'server1',
-                    'use_ssl' => true,
-                    'search_filter' => '(sAMAccountName=%s)',
-                    'search_base_dns' => ['dc=domain1,dc=com'], },
-                ],
-                'servers.attributes' => {
+      context 'with ldap_cfg' do
+        let(:ldap_hash) do
+          {
+            'servers' => [
+              {
+                'host' => 'server1a server1b',
+                'use_ssl' => true,
+                'search_filter' => '(sAMAccountName=%s)',
+                'search_base_dns' => ['dc=domain1,dc=com'],
+                'attributes' => {
                   'name' => 'givenName',
                   'surname' => 'sn',
                   'username' => 'sAMAccountName',
                   'member_of' => 'memberOf',
                   'email' => 'mail',
                 },
+                'group_mappings' => [
+                  {
+                    'group_dn' => 'cn=grafana_viewers,ou=groups,dc=domain1,dc=com',
+                    'org_role' => 'Viewer',
+                  },
+                ],
               },
-            }
-          end
-
-          expected = "# This file is managed by Puppet, any changes will be overwritten\n\n" \
-                     "app_mode = production\n\n" \
-                     "[section]\n" \
-                     "boolean = false\n" \
-                     "empty = \n" \
-                     "number = 8080\n" \
-                     "string = production\n"
-
-          it { is_expected.to contain_file('grafana.ini').with_content(expected) }
-
-          ldap_expected = "\n[[servers]]\n" \
-                          "host = \"server1\"\n" \
-                          "search_base_dns = [\"dc=domain1,dc=com\"]\n" \
-                          "search_filter = \"(sAMAccountName=%s)\"\n" \
-                          "use_ssl = true\n" \
-                          "\n" \
-                          "[servers.attributes]\n" \
-                          "email = \"mail\"\n" \
-                          "member_of = \"memberOf\"\n" \
-                          "name = \"givenName\"\n" \
-                          "surname = \"sn\"\n" \
-                          "username = \"sAMAccountName\"\n" \
-                          "\n"
-
-          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_expected) }
-        end
-
-        context 'with Sensitive `cfg`' do
-          let(:params) do
-            {
-              cfg: sensitive(
-                {
-                  'database' => {
-                    'type' => 'postgres',
-                    'host' => 'db.example.com:5432',
-                    'name' => 'grafana',
-                    'user' => 'grafana',
-                    'password' => 'hunter2',
-                  },
-                },
-              ),
-            }
-          end
-
-          let(:expected) do
-            <<~CONTENT
-              # This file is managed by Puppet, any changes will be overwritten
-
-
-              [database]
-              host = db.example.com:5432
-              name = grafana
-              password = hunter2
-              type = postgres
-              user = grafana
-            CONTENT
-          end
-
-          it { is_expected.to contain_file('grafana.ini').with_content(sensitive(expected)) }
-        end
-      end
-
-      context 'multiple ldap configuration' do
-        describe 'should correctly transform ldap config param into Grafana ldap.toml' do
-          let(:params) do
-            {
-              cfg: {},
-              ldap_cfg: [
-                {
-                  'servers' => [
-                    { 'host' => 'server1a server1b',
-                      'use_ssl' => true,
-                      'search_filter' => '(sAMAccountName=%s)',
-                      'search_base_dns' => ['dc=domain1,dc=com'], },
-                  ],
-                  'servers.attributes' => {
-                    'name' => 'givenName',
-                    'surname' => 'sn',
-                    'username' => 'sAMAccountName',
-                    'member_of' => 'memberOf',
-                    'email' => 'mail',
-                  },
-                },
-                {
-                  'servers' => [
-                    { 'host' => 'server2a server2b',
-                      'use_ssl' => true,
-                      'search_filter' => '(sAMAccountName=%s)',
-                      'search_base_dns' => ['dc=domain2,dc=com'], },
-                  ],
-                  'servers.attributes' => {
-                    'name' => 'givenName',
-                    'surname' => 'sn',
-                    'username' => 'sAMAccountName',
-                    'member_of' => 'memberOf',
-                    'email' => 'mail',
-                  },
-                },
-              ],
-            }
-          end
-
-          ldap_expected = "\n[[servers]]\n" \
-                          "host = \"server1a server1b\"\n" \
-                          "search_base_dns = [\"dc=domain1,dc=com\"]\n" \
-                          "search_filter = \"(sAMAccountName=%s)\"\n" \
-                          "use_ssl = true\n" \
-                          "\n" \
-                          "[servers.attributes]\n" \
-                          "email = \"mail\"\n" \
-                          "member_of = \"memberOf\"\n" \
-                          "name = \"givenName\"\n" \
-                          "surname = \"sn\"\n" \
-                          "username = \"sAMAccountName\"\n" \
-                          "\n" \
-                          "\n[[servers]]\n" \
-                          "host = \"server2a server2b\"\n" \
-                          "search_base_dns = [\"dc=domain2,dc=com\"]\n" \
-                          "search_filter = \"(sAMAccountName=%s)\"\n" \
-                          "use_ssl = true\n" \
-                          "\n" \
-                          "[servers.attributes]\n" \
-                          "email = \"mail\"\n" \
-                          "member_of = \"memberOf\"\n" \
-                          "name = \"givenName\"\n" \
-                          "surname = \"sn\"\n" \
-                          "username = \"sAMAccountName\"\n" \
-                          "\n"
-
-          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_expected) }
-        end
-      end
-
-      context 'with Sensitive `ldap_cfg`' do
-        let(:ldap_cfg) do
-          {
-            'servers' => [
-              { 'host' => 'server1a server1b',
+              {
+                'host' => 'server2a server2b',
                 'use_ssl' => true,
                 'search_filter' => '(sAMAccountName=%s)',
-                'search_base_dns' => ['dc=domain1,dc=com'], },
+                'search_base_dns' => ['dc=domain2,dc=com'],
+                'attributes' => {
+                  'name' => 'givenName',
+                  'surname' => 'sn',
+                  'username' => 'sAMAccountName',
+                  'member_of' => 'memberOf',
+                  'email' => 'mail',
+                },
+                'group_mappings' => [
+                  {
+                    'group_dn' => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
+                    'org_role' => 'Admin',
+                    'grafana_admin' => true,
+                  },
+                ],
+              },
             ],
-            'servers.attributes' => {
-              'name' => 'givenName',
-              'surname' => 'sn',
-              'username' => 'sAMAccountName',
-              'member_of' => 'memberOf',
-              'email' => 'mail',
-            },
           }
         end
 
-        let(:expected) do
-          <<~CONTENT
-
+        let(:ldap_toml) do
+          <<~CONTEXT
             [[servers]]
             host = "server1a server1b"
             search_base_dns = ["dc=domain1,dc=com"]
             search_filter = "(sAMAccountName=%s)"
             use_ssl = true
-
             [servers.attributes]
             email = "mail"
             member_of = "memberOf"
             name = "givenName"
             surname = "sn"
             username = "sAMAccountName"
-
-          CONTENT
+            [[servers.group_mappings]]
+            group_dn = "cn=grafana_viewers,ou=groups,dc=domain1,dc=com"
+            org_role = "Viewer"
+            [[servers]]
+            host = "server2a server2b"
+            search_base_dns = ["dc=domain2,dc=com"]
+            search_filter = "(sAMAccountName=%s)"
+            use_ssl = true
+            [servers.attributes]
+            email = "mail"
+            member_of = "memberOf"
+            name = "givenName"
+            surname = "sn"
+            username = "sAMAccountName"
+            [[servers.group_mappings]]
+            grafana_admin = true
+            group_dn = "cn=grafana_admins,ou=groups,dc=domain2,dc=com"
+            org_role = "Admin"
+          CONTEXT
         end
 
-        context 'Sensitive[Hash]' do
-          let(:params) do
-            {
-              ldap_cfg: sensitive(ldap_cfg),
-            }
-          end
+        context 'when Hash' do
+          let(:params) { { ldap_cfg: ldap_hash } }
 
-          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(sensitive(expected)) }
+          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(ldap_toml) }
         end
 
-        context 'Sensitive[Array[Hash]]' do
-          let(:params) do
-            {
-              ldap_cfg: sensitive([ldap_cfg]),
-            }
-          end
+        context 'when Sensitive[Hash]' do
+          let(:params) { { ldap_cfg: sensitive(ldap_hash) } }
 
-          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(sensitive(expected)) }
+          it { is_expected.to contain_file('/etc/grafana/ldap.toml').with_content(sensitive(ldap_toml)) }
         end
       end
 

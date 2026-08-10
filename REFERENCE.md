@@ -119,11 +119,11 @@ Default value: `'/etc/grafana/grafana.ini'`
 
 ##### <a name="-grafana--ldap_cfg"></a>`ldap_cfg`
 
-Data type: `Optional[Variant[Hash,Array[Hash],Sensitive[Hash],Sensitive[Array[Hash]]]]`
+Data type: `Variant[Hash,Sensitive[Hash]]`
 
 
 
-Default value: `undef`
+Default value: `{}`
 
 ##### <a name="-grafana--container_cfg"></a>`container_cfg`
 
