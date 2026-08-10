@@ -24,7 +24,7 @@ class Puppet::Provider::Grafana < Puppet::Provider
   end
 
   # Return a Net::HTTP::Response object
-  def send_request(operation = 'GET', path = '', data = nil, search_path = {})
+  def send_request(operation = 'GET', path = '', data = nil, search_path = {}, retries = 3)
     request = nil
     encoded_search = ''
 
@@ -61,10 +61,25 @@ class Puppet::Provider::Grafana < Puppet::Provider
     request.content_type = 'application/json'
     request.basic_auth resource[:grafana_user], resource[:grafana_password] if resource[:grafana_user] && resource[:grafana_password]
 
-    Net::HTTP.start(grafana_host, grafana_port,
-                    use_ssl: grafana_scheme == 'https',
-                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
-      http.request(request)
+    attempts = 0
+
+    begin
+      attempts += 1
+      Net::HTTP.start(grafana_host, grafana_port,
+                      use_ssl: grafana_scheme == 'https',
+                      verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+        http.request(request)
+      end
+    rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Timeout::Error, SocketError => e
+      if attempts < retries
+        sleep_time = 2**attempts # exponential backoff
+        Puppet.debug("Grafana HTTP request failed (#{e.message}), retry #{attempts}/#{retries} in #{sleep_time}s")
+        sleep(sleep_time)
+        retry
+      else
+        Puppet.debug("Grafana HTTP request failed after #{retries} attempts: #{e.message}")
+        raise
+      end
     end
   end
 end
