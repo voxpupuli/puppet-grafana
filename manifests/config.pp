@@ -4,10 +4,14 @@
 class grafana::config {
   if $grafana::cfg =~ Sensitive {
     $cfg = $grafana::cfg.unwrap
-    $cfg_content = Sensitive(template('grafana/config.ini.erb'))
+    $cfg_content = Sensitive(epp('grafana/config.ini.epp', {
+      cfg => $cfg,
+    }))
   } else {
     $cfg = $grafana::cfg
-    $cfg_content = template('grafana/config.ini.erb')
+    $cfg_content = epp('grafana/config.ini.epp', {
+      cfg => $cfg,
+    })
   }
 
   case $grafana::install_method {
