@@ -93,4 +93,43 @@ describe Puppet::Type.type(:grafana_datasource) do
       expect(gdatasource.autorequire).to be_empty
     end
   end
+
+  context 'when grafana_password is marked sensitive' do
+    it 'marks the grafana_password parameter sensitive and does not warn' do
+      logs = []
+      datasource = nil
+      Puppet::Util::Log.with_destination(Puppet::Test::LogCollector.new(logs)) do
+        datasource = described_class.new(
+          name: 'foo', grafana_url: 'http://example.com', grafana_password: 'admin',
+          sensitive_parameters: [:grafana_password]
+        )
+      end
+
+      expect(datasource.parameter(:grafana_password).sensitive).to be true
+      expect(datasource[:grafana_password]).to eq('admin')
+      expect(logs.map(&:message)).not_to include(match(%r{Unable to mark}))
+    end
+
+    it 'does not mark the grafana_password parameter sensitive when not requested' do
+      datasource = described_class.new(name: 'foo', grafana_url: 'http://example.com', grafana_password: 'admin')
+
+      expect(datasource.parameter(:grafana_password).sensitive).to be_falsey
+    end
+
+    it 'still marks password and basic_auth_password sensitive as before, independently of grafana_password' do
+      logs = []
+      datasource = nil
+      Puppet::Util::Log.with_destination(Puppet::Test::LogCollector.new(logs)) do
+        datasource = described_class.new(
+          name: 'foo', grafana_url: 'http://example.com', password: 'db_password', basic_auth_password: 'ba_password',
+          grafana_password: 'admin', sensitive_parameters: %i[password basic_auth_password grafana_password]
+        )
+      end
+
+      expect(datasource.parameter(:password).sensitive).to be true
+      expect(datasource.parameter(:basic_auth_password).sensitive).to be true
+      expect(datasource.parameter(:grafana_password).sensitive).to be true
+      expect(logs.map(&:message)).not_to include(match(%r{Unable to mark}))
+    end
+  end
 end

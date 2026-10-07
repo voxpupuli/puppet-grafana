@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet/util/grafana_sensitive_password'
+
 Puppet::Type.newtype(:grafana_membership) do
   @doc = 'Manage resource memberships in Grafana'
 
@@ -45,7 +47,7 @@ Puppet::Type.newtype(:grafana_membership) do
   end
 
   newparam(:grafana_password) do
-    desc 'The password for the Grafana server'
+    desc 'The password for the Grafana server. Accepts a Sensitive value.'
   end
 
   newparam(:membership_type) do
@@ -57,6 +59,8 @@ Puppet::Type.newtype(:grafana_membership) do
     desc 'The role to apply to the membership (Admin, Editor, Viewer)'
     newvalues(:Admin, :Editor, :Viewer)
   end
+
+  include Puppet::Util::GrafanaSensitivePassword
 
   autorequire(:service) do
     'grafana-server'

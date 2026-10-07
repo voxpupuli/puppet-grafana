@@ -554,7 +554,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_dashboard--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server (optional)
+The password for the Grafana server (optional). Accepts a Sensitive value.
 
 ##### <a name="-grafana_dashboard--grafana_url"></a>`grafana_url`
 
@@ -630,7 +630,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_dashboard_permission--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_dashboard_permission--grafana_url"></a>`grafana_url`
 
@@ -767,7 +767,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_datasource--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_datasource--grafana_url"></a>`grafana_url`
 
@@ -837,7 +837,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_folder--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server (optional)
+The password for the Grafana server (optional). Accepts a Sensitive value.
 
 ##### <a name="-grafana_folder--grafana_url"></a>`grafana_url`
 
@@ -1125,7 +1125,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_membership--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_membership--grafana_url"></a>`grafana_url`
 
@@ -1231,7 +1231,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_notification--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_notification--grafana_url"></a>`grafana_url`
 
@@ -1289,7 +1289,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_organization--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_organization--grafana_url"></a>`grafana_url`
 
@@ -1467,7 +1467,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_team--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_team--grafana_url"></a>`grafana_url`
 
@@ -1557,7 +1557,7 @@ Default value: `/api`
 
 ##### <a name="-grafana_user--grafana_password"></a>`grafana_password`
 
-The password for the Grafana server
+The password for the Grafana server. Accepts a Sensitive value.
 
 ##### <a name="-grafana_user--grafana_url"></a>`grafana_url`
 

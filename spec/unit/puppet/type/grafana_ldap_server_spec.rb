@@ -205,6 +205,29 @@ describe Puppet::Type.type(:grafana_ldap_server) do
     end
   end
 
+  context 'when bind_password is marked sensitive' do
+    it 'marks the bind_password parameter sensitive and does not warn' do
+      logs = []
+      ldap_server = nil
+      Puppet::Util::Log.with_destination(Puppet::Test::LogCollector.new(logs)) do
+        ldap_server = described_class.new(
+          name: 'server1', hosts: ['server1'], search_base_dns: ['ou=users'],
+          bind_password: 'foobar', sensitive_parameters: [:bind_password]
+        )
+      end
+
+      expect(ldap_server.parameter(:bind_password).sensitive).to be true
+      expect(ldap_server[:bind_password]).to eq('foobar')
+      expect(logs.map(&:message)).not_to include(match(%r{Unable to mark}))
+    end
+
+    it 'is marked sensitive even without sensitive_parameters (unchanged pre-existing behaviour)' do
+      ldap_server = described_class.new(name: 'server1', hosts: ['server1'], search_base_dns: ['ou=users'], bind_password: 'foobar')
+
+      expect(ldap_server.parameter(:bind_password).sensitive).to be true
+    end
+  end
+
   # search_filter
   context 'validate search_filter' do
     it 'fails if search_filter is not a string' do

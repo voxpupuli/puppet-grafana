@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet/util/grafana_sensitive_password'
+
 Puppet::Type.newtype(:grafana_organization) do
   @doc = 'Manage organizations in Grafana'
 
@@ -41,8 +43,10 @@ Puppet::Type.newtype(:grafana_organization) do
   end
 
   newparam(:grafana_password) do
-    desc 'The password for the Grafana server'
+    desc 'The password for the Grafana server. Accepts a Sensitive value.'
   end
+
+  include Puppet::Util::GrafanaSensitivePassword
 
   autorequire(:service) do
     'grafana-server'

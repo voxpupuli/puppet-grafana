@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'puppet/util/grafana_sensitive_password'
 
 Puppet::Type.newtype(:grafana_folder) do
   @doc = 'Manage folders in Grafana'
@@ -29,7 +30,7 @@ Puppet::Type.newtype(:grafana_folder) do
   end
 
   newparam(:grafana_password) do
-    desc 'The password for the Grafana server (optional)'
+    desc 'The password for the Grafana server (optional). Accepts a Sensitive value.'
   end
 
   newparam(:grafana_api_path) do
@@ -57,6 +58,8 @@ Puppet::Type.newtype(:grafana_folder) do
       is_m.sort == should_m.sort
     end
   end
+
+  include Puppet::Util::GrafanaSensitivePassword
 
   autorequire(:service) do
     'grafana-server'

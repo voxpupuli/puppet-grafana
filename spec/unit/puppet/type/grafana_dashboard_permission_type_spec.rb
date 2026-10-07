@@ -71,4 +71,32 @@ describe Puppet::Type.type(:grafana_dashboard_permission) do
       expect(relationship).to be_a Puppet::Relationship
     end
   end
+
+  context 'when grafana_password is marked sensitive' do
+    it 'marks the grafana_password parameter sensitive and does not warn' do
+      logs = []
+      permission = nil
+      Puppet::Util::Log.with_destination(Puppet::Test::LogCollector.new(logs)) do
+        permission = described_class.new(
+          title: 'foo_title', grafana_url: 'http://example.com/', grafana_api_path: '/api',
+          user: 'foo_user', dashboard: 'foo_dashboard', permission: 'View', ensure: :present,
+          grafana_password: 'admin', sensitive_parameters: [:grafana_password]
+        )
+      end
+
+      expect(permission.parameter(:grafana_password).sensitive).to be true
+      expect(permission[:grafana_password]).to eq('admin')
+      expect(logs.map(&:message)).not_to include(match(%r{Unable to mark}))
+    end
+
+    it 'does not mark the grafana_password parameter sensitive when not requested' do
+      permission = described_class.new(
+        title: 'foo_title', grafana_url: 'http://example.com/', grafana_api_path: '/api',
+        user: 'foo_user', dashboard: 'foo_dashboard', permission: 'View', ensure: :present,
+        grafana_password: 'admin'
+      )
+
+      expect(permission.parameter(:grafana_password).sensitive).to be_falsey
+    end
+  end
 end

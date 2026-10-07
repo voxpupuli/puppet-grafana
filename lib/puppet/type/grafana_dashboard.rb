@@ -3,6 +3,7 @@
 #    Copyright 2015 Mirantis, Inc.
 #
 require 'json'
+require 'puppet/util/grafana_sensitive_password'
 
 Puppet::Type.newtype(:grafana_dashboard) do
   @doc = 'Manage dashboards in Grafana'
@@ -54,7 +55,7 @@ Puppet::Type.newtype(:grafana_dashboard) do
   end
 
   newparam(:grafana_password) do
-    desc 'The password for the Grafana server (optional)'
+    desc 'The password for the Grafana server (optional). Accepts a Sensitive value.'
   end
 
   newparam(:grafana_api_path) do
@@ -74,6 +75,9 @@ Puppet::Type.newtype(:grafana_dashboard) do
   validate do
     fail('content is required when ensure is present') if self[:ensure] == :present && self[:content].nil? # rubocop:disable Style/SignalException
   end
+
+  include Puppet::Util::GrafanaSensitivePassword
+
   autorequire(:service) do
     'grafana-server'
   end

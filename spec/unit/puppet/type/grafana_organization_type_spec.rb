@@ -56,4 +56,27 @@ describe Puppet::Type.type(:grafana_organization) do
       expect(relationship).to be_a Puppet::Relationship
     end
   end
+
+  context 'when grafana_password is marked sensitive' do
+    it 'marks the grafana_password parameter sensitive and does not warn' do
+      logs = []
+      organization = nil
+      Puppet::Util::Log.with_destination(Puppet::Test::LogCollector.new(logs)) do
+        organization = described_class.new(
+          name: 'foo', grafana_url: 'http://example.com', grafana_password: 'admin',
+          sensitive_parameters: [:grafana_password]
+        )
+      end
+
+      expect(organization.parameter(:grafana_password).sensitive).to be true
+      expect(organization[:grafana_password]).to eq('admin')
+      expect(logs.map(&:message)).not_to include(match(%r{Unable to mark}))
+    end
+
+    it 'does not mark the grafana_password parameter sensitive when not requested' do
+      organization = described_class.new(name: 'foo', grafana_url: 'http://example.com', grafana_password: 'admin')
+
+      expect(organization.parameter(:grafana_password).sensitive).to be_falsey
+    end
+  end
 end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet/util/grafana_sensitive_password'
+
 Puppet::Type.newtype(:grafana_team) do
   @doc = 'Manage teams in Grafana'
 
@@ -32,7 +34,7 @@ Puppet::Type.newtype(:grafana_team) do
   end
 
   newparam(:grafana_password) do
-    desc 'The password for the Grafana server'
+    desc 'The password for the Grafana server. Accepts a Sensitive value.'
   end
 
   newparam(:organization) do
@@ -61,6 +63,8 @@ Puppet::Type.newtype(:grafana_team) do
   newproperty(:timezone) do
     desc 'The timezone to use for the team'
   end
+
+  include Puppet::Util::GrafanaSensitivePassword
 
   autorequire(:service) do
     'grafana-server'

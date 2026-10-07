@@ -2,6 +2,8 @@
 
 #    Copyright 2015 Mirantis, Inc.
 #
+require 'puppet/util/grafana_sensitive_password'
+
 Puppet::Type.newtype(:grafana_notification) do
   @doc = 'Manage notification in Grafana'
 
@@ -34,7 +36,7 @@ Puppet::Type.newtype(:grafana_notification) do
   end
 
   newparam(:grafana_password) do
-    desc 'The password for the Grafana server'
+    desc 'The password for the Grafana server. Accepts a Sensitive value.'
   end
 
   newproperty(:type) do
@@ -64,6 +66,8 @@ Puppet::Type.newtype(:grafana_notification) do
       raise ArgumentError, 'settings should be a Hash!' unless value.nil? || value.is_a?(Hash)
     end
   end
+
+  include Puppet::Util::GrafanaSensitivePassword
 
   autorequire(:service) do
     'grafana-server'
