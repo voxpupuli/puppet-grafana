@@ -160,7 +160,7 @@ Some minor notes:
 * If your configuration contains secrets you want hidden in Puppet log output and reports
   use a `Sensitive[Hash]` instead of a normal `Hash`
 
-#### `ldap_cfg`
+##### `ldap_cfg`
 
 Manages the Grafana LDAP configuration file. This hash is directly translated
 into the corresponding TOML file, allowing for full flexibility in generating
@@ -169,192 +169,160 @@ the configuration.
 See the [LDAP documentation](https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/ldap/)
 for more information.
 
-##### TOML note
+> [!WARNING]
+>
+> `ldap_cfg` was using the [toml](https://rubygems.org/gems/toml/) gem before.
+> It was refactored to use `stdlib::to_toml()` function instead. This change
+> requires existing configuration to be corrected. See migration notes below!
 
-This option **requires** the [toml](https://rubygems.org/gems/toml/) gem.
-
-```sh
-puppet resource package toml ensure=installed provider=puppetserver_gem
-```
-
-```puppet
-package { 'toml':
-  provider => puppetserver_gem,
-}
-```
-
-This enables the puppetserver to compile a catalog.
-If you've the [generate types](https://www.puppet.com/docs/puppet/latest/environment_isolation.html) option enabled in r10k or code-manager, you also need to install the gem for the puppet-agent Ruby:
-
-```sh
-puppet resource package toml ensure=installed provider=puppet_gem
-```
-
-```puppet
-package { 'toml-puppetserver':
-  name     => 'toml',
-  provider => puppetserver_gem,
-}
-
-package { 'toml-puppet':
-  name     => 'toml',
-  provider => puppet_gem,
-}
-```
-
-After installing the gem(s), restart the Puppet Server and if using r10k or code-manager, re-deploy the environment(s).
-
-```sh
-systemctl restart puppetserver.service
-r10k deploy environment --generate-types
-```
-
-##### secrets
+###### Secrets
 
 LDAP configuration usually contains secrets. If you want to stop these being leaked in logs and reports,
 the `ldap_cfg` parameter will optionally accept the `Sensitive` data type.
 
-##### cfg note
+###### Enable LDAP auth in main configuration
 
-This option by itself is not sufficient to enable LDAP configuration as it must
-be enabled in the main configuration file. Enable it in cfg with:
+`ldap_cfg` option by itself is not sufficient to enable LDAP configuration as it must
+be enabled in the main configuration file. Enable it in `cfg` with:
 
-```
+```puppet
 'auth.ldap' => {
   enabled     => 'true',
   config_file => '/etc/grafana/ldap.toml',
 },
 ```
-#### Example LDAP config
 
-```
+###### Example LDAP config
+
+```puppet
 ldap_cfg => Sensitive({
   servers => [
-    { host            => 'ldapserver1.domain1.com',
+    {
+      host            => 'ldapserver1.domain1.com',
       port            => 636,
       use_ssl         => true,
       search_filter   => '(sAMAccountName=%s)',
       search_base_dns => [ 'dc=domain1,dc=com' ],
       bind_dn         => 'user@domain1.com',
       bind_password   => 'passwordhere',
+      attributes      => {
+        name      => 'givenName',
+        surname   => 'sn',
+        username  => 'sAMAccountName',
+        member_of => 'memberOf',
+        email     => 'mail',
+      },
     },
   ],
-  'servers.attributes' => {
-    name      => 'givenName',
-    surname   => 'sn',
-    username  => 'sAMAccountName',
-    member_of => 'memberOf',
-    email     => 'mail',
-  }
 }),
 ```
 
-If you want to connect to multiple LDAP servers using different configurations,
-use an array to enwrap the configurations as shown below.
+If you want to connect to multiple LDAP servers with different configurations,
+append them to the `servers` array:
 
-```
-ldap_cfg => Sensitive([
-  {
-    servers => [
-      {
-        host            => 'ldapserver1.domain1.com',
-        port            => 636,
-        use_ssl         => true,
-        search_filter   => '(sAMAccountName=%s)',
-        search_base_dns => [ 'dc=domain1,dc=com' ],
-        bind_dn         => 'user@domain1.com',
-        bind_password   => 'passwordhere',
+```puppet
+ldap_cfg => Sensitive({
+  servers => [
+    {
+      host            => 'ldapserver1.domain1.com',
+      port            => 636,
+      use_ssl         => true,
+      search_filter   => '(sAMAccountName=%s)',
+      search_base_dns => [ 'dc=domain1,dc=com' ],
+      bind_dn         => 'user@domain1.com',
+      bind_password   => 'passwordhere',
+      attributes      => {
+        name      => 'givenName',
+        surname   => 'sn',
+        username  => 'sAMAccountName',
+        member_of => 'memberOf',
+        email     => 'mail',
       },
-    ],
-    'servers.attributes' => {
-      name      => 'givenName',
-      surname   => 'sn',
-      username  => 'sAMAccountName',
-      member_of => 'memberOf',
-      email     => 'mail',
+      group_mappings  => [
+        {
+          group_dn => 'cn=grafana_viewers,ou=groups,dc=domain1,dc=com',
+          org_role => 'Viewer',
+        }
+      ],
     },
-    'servers.group_mappings' => [
-      {
-        group_dn => 'cn=grafana_viewers,ou=groups,dc=domain1,dc=com',
-        org_role => 'Viewer',
+    {
+      host            => 'ldapserver2.domain2.com',
+      port            => 389,
+      use_ssl         => false,
+      start_tls       => true,
+      search_filter   => '(uid=%s)',
+      search_base_dns => [ 'dc=domain2,dc=com' ],
+      bind_dn         => 'user@domain2.com',
+      bind_password   => 'passwordhere',
+      attributes      => {
+        name      => 'givenName',
+        surname   => 'sn',
+        username  => 'uid',
+        member_of => 'memberOf',
+        email     => 'mail',
       }
-    ],
-  },
-  {
-    servers => [
-      {
-        host            => 'ldapserver2.domain2.com',
-        port            => 389,
-        use_ssl         => false,
-        start_tls       => true,
-        search_filter   => '(uid=%s)',
-        search_base_dns => [ 'dc=domain2,dc=com' ],
-        bind_dn         => 'user@domain2.com',
-        bind_password   => 'passwordhere',
-      },
-    ],
-    'servers.attributes' => {
-      name      => 'givenName',
-      surname   => 'sn',
-      username  => 'uid',
-      member_of => 'memberOf',
-      email     => 'mail',
-    }
-    'servers.group_mappings' => [
-      {
-        'group_dn'      => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
-        'org_role'      => 'Admin',
-        'grafana_admin' => true,
-      }
-    ],
-  },
-])
-
-
-#####
-# or in hiera-yaml style
-grafana::ldap_cfg:
-  - servers:
-      - host: ldapserver1.domain1.com
-        port: 636
-        use_ssl: true
-        search_filter: '(sAMAccountName=%s)'
-        search_base_dns: ['dc=domain1,dc=com']
-        bind_dn: 'user@domain1.com'
-        bind_password: 'passwordhere'
-    servers.attributes:
-      name: givenName
-      surname: sn
-      username: sAMAccountName
-      member_of: memberOf
-      email: mail
-    servers.group_mappings:
-      - group_dn: cn=grafana_viewers,ou=groups,dc=domain1,dc=com
-        org_role: Viewer
-
-  - servers:
-      - host: ldapserver2.domain2.com
-        port: 389
-        use_ssl: false
-        start_tls: true
-        search_filter: '(uid=%s)',
-        search_base_dns: ['dc=domain2,dc=com']
-        bind_dn: 'user@domain2.com'
-        bind_password: 'passwordhere'
-    servers.attributes:
-      name: givenName
-      surname: sn
-      username: uid
-      member_of: memberOf
-      email: mail
-    servers.group_mappings:
-      - group_dn: cn=grafana_admins,ou=groups,dc=domain2,dc=com
-        org_role: Admin
-        grafana_admin: true
-
-
-#####
+      group_mappings  => [
+        {
+          group_dn      => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
+          org_role      => 'Admin',
+          grafana_admin => true,
+        }
+      ],
+    },
+  ],
+}),
 ```
+
+Same as above, but in Hiera
+
+```yaml
+grafana::ldap_cfg:
+  servers:
+    - host: ldapserver1.domain1.com
+      port: 636
+      use_ssl: true
+      search_filter: '(sAMAccountName=%s)'
+      search_base_dns: ['dc=domain1,dc=com']
+      bind_dn: 'user@domain1.com'
+      bind_password: 'passwordhere'
+      attributes:
+        name: givenName
+        surname: sn
+        username: sAMAccountName
+        member_of: memberOf
+        email: mail
+      group_mappings:
+        - group_dn: cn=grafana_viewers,ou=groups,dc=domain1,dc=com
+          org_role: Viewer
+    - host: ldapserver2.domain2.com
+      port: 389
+      use_ssl: false
+      start_tls: true
+      search_filter: '(uid=%s)',
+      search_base_dns: ['dc=domain2,dc=com']
+      bind_dn: 'user@domain2.com'
+      bind_password: 'passwordhere'
+      attributes:
+        name: givenName
+        surname: sn
+        username: uid
+        member_of: memberOf
+        email: mail
+      group_mappings:
+        - group_dn: cn=grafana_admins,ou=groups,dc=domain2,dc=com
+          org_role: Admin
+          grafana_admin: true
+```
+
+###### How to migrate from previous (toml-gem-based) configuration
+
+1. `ldap_cfg` cannot be Array anymore. You have to squash your top-level array
+   items `servers` key values together. Move those under the single top-level
+   `servers` key.
+
+2. "Dotted keys" (`servers.attributes`, `servers.group_mappings`) are part of
+   the `servers` array items actually. So they should be moved there with the
+   `servers.` prefix stripped.
 
 ##### `container_cfg`
 

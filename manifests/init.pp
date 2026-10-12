@@ -154,7 +154,7 @@ class grafana (
   Optional[String] $sysconfig_location,
   Optional[String] $archive_source = undef,
   Variant[Hash,Sensitive[Hash]] $cfg = {},
-  Optional[Variant[Hash,Array[Hash],Sensitive[Hash],Sensitive[Array[Hash]]]] $ldap_cfg = undef,
+  Variant[Hash,Sensitive[Hash]] $ldap_cfg = {},
   Boolean $container_cfg = false,
   Hash $container_params = {},
   String $docker_image = 'grafana/grafana',
