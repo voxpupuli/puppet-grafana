@@ -4,12 +4,21 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:grafana_plugin).provider(:grafana_cli)
 describe provider_class do
+  let(:provider_file) do
+    File.expand_path('../../../../../lib/puppet/provider/grafana_plugin/grafana_cli.rb', __dir__)
+  end
+
   let(:resource) do
     Puppet::Type::Grafana_plugin.new(
       name: 'grafana-wizzle',
     )
   end
   let(:provider) { provider_class.new(resource) }
+
+  before do
+    allow(provider_class).to receive(:command).with(:grafana).and_return('/usr/bin/grafana')
+    allow(provider).to receive(:command).with(:grafana).and_return('/usr/bin/grafana')
+  end
 
   describe '#instances' do
     let(:plugins_ls_two) do
@@ -30,23 +39,23 @@ describe provider_class do
     end
 
     it 'has the correct names' do
-      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_two)
+      allow(provider_class).to receive(:grafana).with('cli', 'plugins', 'ls').and_return(plugins_ls_two)
       instances = provider_class.instances
       expect(instances.map(&:name)).to match_array(%w[grafana-simple-json-datasource jdbranham-diagram-panel])
       expect(instances.find { |plugin| plugin.name == 'grafana-simple-json-datasource' }.ensure).to eq('1.3.4')
-      expect(provider_class).to have_received(:grafana_cli).once
+      expect(provider_class).to have_received(:grafana).once
     end
 
     it 'does not match if there are no plugins' do
-      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_none)
+      allow(provider_class).to receive(:grafana).with('cli', 'plugins', 'ls').and_return(plugins_ls_none)
       expect(provider_class.instances.size).to eq(0)
       expect(provider.exists?).to eq(false)
-      expect(provider_class).to have_received(:grafana_cli).twice
+      expect(provider_class).to have_received(:grafana).twice
     end
 
     it 'normalizes trailing whitespace in plugin versions' do
       plugins_ls_with_whitespace = "installed plugins:\ngrafana-simple-json-datasource @ 1.3.4   \n"
-      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_with_whitespace)
+      allow(provider_class).to receive(:grafana).with('cli', 'plugins', 'ls').and_return(plugins_ls_with_whitespace)
 
       instances = provider_class.instances
       expect(instances.find { |plugin| plugin.name == 'grafana-simple-json-datasource' }.ensure).to eq('1.3.4')
@@ -54,7 +63,7 @@ describe provider_class do
 
     it 'parses plugin version when grafana adds extra trailing metadata' do
       plugins_ls_with_metadata = "installed plugins:\nvertamedia-clickhouse-datasource @ 3.4.8 (unsigned)\n"
-      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_with_metadata)
+      allow(provider_class).to receive(:grafana).with('cli', 'plugins', 'ls').and_return(plugins_ls_with_metadata)
 
       instances = provider_class.instances
       expect(instances.find { |plugin| plugin.name == 'vertamedia-clickhouse-datasource' }.ensure).to eq('3.4.8')
@@ -62,7 +71,7 @@ describe provider_class do
 
     it 'parses plugin lines with leading whitespace' do
       plugins_ls_with_indent = "installed plugins:\n  vertamedia-clickhouse-datasource @ 3.4.8\n"
-      allow(provider_class).to receive(:grafana_cli).with('plugins', 'ls').and_return(plugins_ls_with_indent)
+      allow(provider_class).to receive(:grafana).with('cli', 'plugins', 'ls').and_return(plugins_ls_with_indent)
 
       instances = provider_class.instances
       expect(instances.find { |plugin| plugin.name == 'vertamedia-clickhouse-datasource' }.ensure).to eq('3.4.8')
@@ -90,9 +99,9 @@ describe provider_class do
   end
 
   it '#create' do
-    allow(provider).to receive(:grafana_cli)
+    allow(provider).to receive(:grafana)
     provider.create
-    expect(provider).to have_received(:grafana_cli).with('plugins', 'install', 'grafana-wizzle')
+    expect(provider).to have_received(:grafana).with('cli', 'plugins', 'install', 'grafana-wizzle')
   end
 
   describe '#create with version in ensure' do
@@ -104,16 +113,27 @@ describe provider_class do
     end
 
     it 'installs specific plugin version' do
-      allow(provider).to receive(:grafana_cli)
+      allow(provider).to receive(:grafana)
       provider.create
-      expect(provider).to have_received(:grafana_cli).with('plugins', 'install', 'grafana-wizzle', '1.4.0')
+      expect(provider).to have_received(:grafana).with('cli', 'plugins', 'install', 'grafana-wizzle', '1.4.0')
     end
   end
 
   it '#destroy' do
-    allow(provider).to receive(:grafana_cli)
+    allow(provider).to receive(:grafana)
     provider.destroy
-    expect(provider).to have_received(:grafana_cli).with('plugins', 'uninstall', 'grafana-wizzle')
+    expect(provider).to have_received(:grafana).with('cli', 'plugins', 'uninstall', 'grafana-wizzle')
+  end
+
+  it '#destroy when grafana is unavailable' do
+    allow(provider).to receive(:command).with(:grafana).and_return(nil)
+    allow(provider).to receive(:grafana)
+    allow(Puppet).to receive(:debug)
+
+    provider.destroy
+
+    expect(provider).not_to have_received(:grafana)
+    expect(Puppet).to have_received(:debug).with('No grafana_cli command found, unable to uninstall grafana plugin grafana-wizzle')
   end
 
   describe 'create with repo' do
@@ -125,9 +145,9 @@ describe provider_class do
     end
 
     it '#create with repo' do
-      allow(provider).to receive(:grafana_cli)
+      allow(provider).to receive(:grafana)
       provider.create
-      expect(provider).to have_received(:grafana_cli).with('--repo', 'https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin')
+      expect(provider).to have_received(:grafana).with('cli', '--repo', 'https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin')
     end
   end
 
@@ -141,9 +161,9 @@ describe provider_class do
     end
 
     it 'installs specific version from repo' do
-      allow(provider).to receive(:grafana_cli)
+      allow(provider).to receive(:grafana)
       provider.create
-      expect(provider).to have_received(:grafana_cli).with('--repo', 'https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin', '1.4.0')
+      expect(provider).to have_received(:grafana).with('cli', '--repo', 'https://nexus.company.com/grafana/plugins', 'plugins', 'install', 'grafana-plugin', '1.4.0')
     end
   end
 
@@ -156,9 +176,20 @@ describe provider_class do
     end
 
     it '#create with plugin url' do
-      allow(provider).to receive(:grafana_cli)
+      allow(provider).to receive(:grafana)
       provider.create
-      expect(provider).to have_received(:grafana_cli).with('--pluginUrl', 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download', 'plugins', 'install', 'grafana-simple-json-datasource')
+      expect(provider).to have_received(:grafana).with('cli', '--pluginUrl', 'https://grafana.com/api/plugins/grafana-simple-json-datasource/versions/latest/download', 'plugins', 'install', 'grafana-simple-json-datasource')
+    end
+  end
+
+  describe 'provider suitability' do
+    it 'is suitable when grafana is unavailable' do
+      allow(Puppet::Util).to receive(:which).and_call_original
+      allow(Puppet::Util).to receive(:which).with('grafana').and_return(nil)
+
+      load provider_file
+
+      expect(Puppet::Type.type(:grafana_plugin).provider(:grafana_cli).suitable?).to be(true)
     end
   end
 end

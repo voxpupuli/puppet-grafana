@@ -7,19 +7,36 @@ Puppet::Type.type(:package).provide :grafana, parent: Puppet::Provider::Package 
 
   has_feature :installable, :install_options, :uninstallable, :upgradeable, :versionable
 
-  commands grafana_cli: 'grafana-cli'
+  has_command(:grafana, 'grafana') do
+    is_optional
+  end
+
+  def self.parse_plugin_line(line)
+    return nil unless line.include?('@')
+
+    name, raw_version = line.strip.split(%r{\s+@\s+}, 2)
+    return nil if name.nil? || raw_version.nil?
+
+    version = raw_version.strip.split(%r{\s+}, 2).first
+    return nil if version.nil? || version.empty?
+
+    [name, version]
+  end
 
   def self.pluginslist
     plugins = {}
+    if command(:grafana)
+      grafana('cli', 'plugins', 'ls').split(%r{\n}).each do |line|
+        parsed = parse_plugin_line(line)
+        next unless parsed
 
-    grafana_cli('plugins', 'ls').split(%r{\n}).each do |line|
-      next unless line =~ %r{^(\S+)\s+@\s+((?:\d\.).+)\s*$}
-
-      name = Regexp.last_match(1)
-      version = Regexp.last_match(2)
-      plugins[name] = version
+        name, version = parsed
+        Puppet.debug("Found grafana plugin #{name} #{version}")
+        plugins[name] = version
+      end
+    else
+      Puppet.debug('No grafana_cli command found')
     end
-
     plugins
   end
 
@@ -40,7 +57,15 @@ Puppet::Type.type(:package).provide :grafana, parent: Puppet::Provider::Package 
   end
 
   def latest
-    grafana_cli('plugins', 'list-versions', resource[:name]).lines.first.strip
+    output = begin
+      grafana('cli', 'plugins', 'list-versions', resource[:name])
+    rescue Puppet::Error, Puppet::ExecutionFailure => e
+      Puppet.debug("Unable to query grafana plugin versions for #{resource[:name]}: #{e.message}")
+      nil
+    end
+    return nil if output.nil?
+
+    output.lines.first&.strip
   end
 
   def update
@@ -50,7 +75,11 @@ Puppet::Type.type(:package).provide :grafana, parent: Puppet::Provider::Package 
       cmd = %w[plugins update]
       cmd << install_options if resource[:install_options]
       cmd << resource[:name]
-      grafana_cli(*cmd)
+      begin
+        grafana('cli', *cmd)
+      rescue Puppet::Error, Puppet::ExecutionFailure => e
+        Puppet.debug("Unable to update grafana plugin #{resource[:name]}: #{e.message}")
+      end
     else
       install
     end
@@ -62,7 +91,11 @@ Puppet::Type.type(:package).provide :grafana, parent: Puppet::Provider::Package 
     cmd << resource[:name]
     cmd << resource[:ensure] unless resource[:ensure].is_a? Symbol
 
-    grafana_cli(*cmd)
+    begin
+      grafana('cli', *cmd)
+    rescue Puppet::Error, Puppet::ExecutionFailure => e
+      Puppet.debug("Unable to install grafana plugin #{resource[:name]}: #{e.message}")
+    end
   end
 
   def install_options
@@ -70,6 +103,10 @@ Puppet::Type.type(:package).provide :grafana, parent: Puppet::Provider::Package 
   end
 
   def uninstall
-    grafana_cli('plugins', 'uninstall', resource[:name])
+    if command(:grafana)
+      grafana('cli', 'plugins', 'uninstall', resource[:name])
+    else
+      Puppet.debug("No grafana_cli command found, unable to uninstall grafana plugin #{resource[:name]}")
+    end
   end
 end

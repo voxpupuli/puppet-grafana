@@ -20,7 +20,7 @@ supported_versions.each do |grafana_version|
       end
 
       it 'has the plugin' do
-        shell('grafana-cli plugins ls') do |r|
+        shell('grafana cli plugins ls') do |r|
           expect(r.stdout).to match(%r{grafana-simple-json-datasource})
         end
       end
@@ -43,7 +43,7 @@ supported_versions.each do |grafana_version|
       end
 
       it 'has the plugin' do
-        shell('grafana-cli plugins ls') do |r|
+        shell('grafana cli plugins ls') do |r|
           expect(r.stdout).to match(%r{grafana-simple-json-datasource})
         end
       end
@@ -52,7 +52,7 @@ supported_versions.each do |grafana_version|
     context 'create plugin resource with url' do
       it 'runs successfully' do
         # Reset and reinstall the same plugin by URL
-        shell('grafana-cli plugins uninstall grafana-simple-json-datasource')
+        shell('grafana cli plugins uninstall grafana-simple-json-datasource')
         pp = <<-EOS
         class { 'grafana':
           version => "#{grafana_version}"
@@ -68,7 +68,7 @@ supported_versions.each do |grafana_version|
       end
 
       it 'has the plugin' do
-        shell('grafana-cli plugins ls') do |r|
+        shell('grafana cli plugins ls') do |r|
           expect(r.stdout).to match(%r{grafana-simple-json-datasource})
         end
       end
@@ -90,7 +90,7 @@ supported_versions.each do |grafana_version|
       end
 
       it 'does not have the plugin' do
-        shell('grafana-cli plugins ls') do |r|
+        shell('grafana cli plugins ls') do |r|
           expect(r.stdout).not_to match(%r{grafana-simple-json-datasource})
         end
       end
@@ -131,7 +131,7 @@ supported_versions.each do |grafana_version|
       end
 
       it 'does have the plugin with specific version' do
-        shell('grafana-cli plugins ls') do |r|
+        shell('grafana cli plugins ls') do |r|
           expect(r.stdout).to match(%r{grafana-simple-json-datasource})
           expect(r.stdout).to match(%r{1\.4\.0})
         end
