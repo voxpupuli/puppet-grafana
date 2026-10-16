@@ -1727,4 +1727,3 @@ http or https
 Data type: `Integer`
 
 The port Grafana is running on
-
