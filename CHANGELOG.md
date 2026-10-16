@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v15.1.0](https://github.com/voxpupuli/puppet-grafana/tree/v15.1.0) (2026-10-16)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v15.0.1...v15.1.0)
+
+**Implemented enhancements:**
+
+- puppetlabs/stdlib: Allow 10.x & puppet/archive: Allow 9.x [\#420](https://github.com/voxpupuli/puppet-grafana/pull/420) ([bastelfreak](https://github.com/bastelfreak))
+- Update requirements to allow OpenVox 9 [\#419](https://github.com/voxpupuli/puppet-grafana/pull/419) ([sebastianrakel](https://github.com/sebastianrakel))
+
 ## [v15.0.1](https://github.com/voxpupuli/puppet-grafana/tree/v15.0.1) (2026-08-07)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-grafana/compare/v15.0.0...v15.0.1)
